@@ -1,34 +1,24 @@
--- Create database
+-- ------------------------------------------------------------
+-- Database
+-- ------------------------------------------------------------
 DROP DATABASE IF EXISTS adventurexp;
 CREATE DATABASE adventurexp;
 USE adventurexp;
 
--- Employee table
+-- ------------------------------------------------------------
+-- Employee
+-- ------------------------------------------------------------
 CREATE TABLE Employee (
     employee_id   INT AUTO_INCREMENT PRIMARY KEY,
     name          VARCHAR(100) NOT NULL,
-    phone         VARCHAR(20) NOT NULL,
-    email         VARCHAR (100) NOT NULL,
-    role          VARCHAR(50)
+    phone         VARCHAR(20)  NOT NULL,
+    email         VARCHAR(100) NOT NULL,
+    role          VARCHAR(50)  NOT NULL
 );
 
--- Shift table
-CREATE TABLE Shift (
-    shift_id      INT AUTO_INCREMENT PRIMARY KEY,
-    start_time    DATETIME NOT NULL,
-    end_time      DATETIME NOT NULL
-);
-
--- Junction table for Shift <-> Employee (many-to-many)
-CREATE TABLE Shift_Employee (
-    shift_id    INT NOT NULL,
-    employee_id INT NOT NULL,
-    PRIMARY KEY (shift_id, employee_id),
-    FOREIGN KEY (shift_id) REFERENCES Shift(shift_id),
-    FOREIGN KEY (employee_id) REFERENCES Employee(employee_id)
-);
-
--- Activity table
+-- ------------------------------------------------------------
+-- Activity
+-- ------------------------------------------------------------
 CREATE TABLE Activity (
     activity_id      INT AUTO_INCREMENT PRIMARY KEY,
     name             VARCHAR(100) NOT NULL,
@@ -38,20 +28,45 @@ CREATE TABLE Activity (
     max_participants INT NOT NULL
 );
 
--- Reservation table
-CREATE TABLE Reservation (
-    reservation_id INT AUTO_INCREMENT PRIMARY KEY,
-    start_time DATETIME NOT NULL,
-    end_time   DATETIME,
-    participants   INT NOT NULL,
-    contact_name   VARCHAR(100) NOT NULL,
-    contact_phone  VARCHAR(20) NOT NULL,
-    contact_email  VARCHAR (100) NOT NULL,
-    activity_id    INT NOT NULL,
+-- ------------------------------------------------------------
+-- Shift (each shift belongs to an activity)
+-- ------------------------------------------------------------
+CREATE TABLE Shift (
+    shift_id     INT AUTO_INCREMENT PRIMARY KEY,
+    activity_id  INT NOT NULL,
+    start_time   DATETIME NOT NULL,
+    end_time     DATETIME NOT NULL,
+    capacity     INT,
     FOREIGN KEY (activity_id) REFERENCES Activity(activity_id)
 );
 
--- Junction table for Reservation <-> Employee (many-to-many)
+-- ------------------------------------------------------------
+-- Shift staffing (which employees work on which shift)
+-- ------------------------------------------------------------
+CREATE TABLE Shift_Employee (
+    shift_id     INT NOT NULL,
+    employee_id  INT NOT NULL,
+    PRIMARY KEY (shift_id, employee_id),
+    FOREIGN KEY (shift_id) REFERENCES Shift(shift_id),
+    FOREIGN KEY (employee_id) REFERENCES Employee(employee_id)
+);
+
+-- ------------------------------------------------------------
+-- Reservation (customers book into a shift)
+-- ------------------------------------------------------------
+CREATE TABLE Reservation (
+    reservation_id INT AUTO_INCREMENT PRIMARY KEY,
+    shift_id       INT NOT NULL,
+    participants   INT NOT NULL,
+    contact_name   VARCHAR(100) NOT NULL,
+    contact_phone  VARCHAR(20)  NOT NULL,
+    contact_email  VARCHAR(100) NOT NULL,
+    FOREIGN KEY (shift_id) REFERENCES Shift(shift_id)
+);
+
+-- ------------------------------------------------------------
+-- Reservation handling (which employee managed booking)
+-- ------------------------------------------------------------
 CREATE TABLE Reservation_Employee (
     reservation_id INT NOT NULL,
     employee_id    INT NOT NULL,
