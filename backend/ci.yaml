@@ -1,5 +1,8 @@
 name: Java test with caching
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
