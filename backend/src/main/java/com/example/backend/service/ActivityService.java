@@ -1,4 +1,4 @@
 package com.example.backend.service;
 
-public class ActivityService {
+public interface ActivityService {
 }

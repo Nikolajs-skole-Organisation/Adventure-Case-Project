@@ -1,4 +1,4 @@
 package com.example.backend.service;
 
-public class ShiftService {
+public interface ShiftService {
 }
