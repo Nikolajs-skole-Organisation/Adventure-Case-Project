@@ -13,7 +13,7 @@ import java.util.Set;
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String name;
     private String email;
@@ -23,7 +23,7 @@ public class Employee {
     @ManyToMany(mappedBy = "employees")
     private Set<Shift> shifts = new HashSet<>();
 
-    public Employee(long id, String name, String email, String phone, String role) {
+    public Employee(Long id, String name, String email, String phone, String role) {
         this.id = id;
         this.name = name;
         this.email = email;

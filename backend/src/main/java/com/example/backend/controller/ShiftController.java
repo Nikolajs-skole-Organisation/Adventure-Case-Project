@@ -20,12 +20,11 @@ public class ShiftController {
         this.shiftService = shiftService;
     }
 
-    @PostMapping("/{shiftId}/assignments")
+    @PostMapping("/{shiftId}/employees")
     public ResponseEntity<ShiftAssignmentDTO.ShiftAssignmentDto> assignEmployeeToShift(
             @PathVariable Long shiftId,
             @RequestBody ShiftAssignmentDTO.ShiftAssignmentDto dto) {
         ShiftAssignmentDTO.ShiftAssignmentDto created = shiftService.assignEmployeeToShift(shiftId, dto.employeeId());
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
-
     }
 }

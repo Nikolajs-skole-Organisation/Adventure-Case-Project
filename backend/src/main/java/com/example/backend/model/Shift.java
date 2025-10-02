@@ -85,4 +85,17 @@ public class Shift {
     public void setEmployees(Set<Employee> employees) {
         this.employees = employees;
     }
+
+    // Helper methods
+    public void addEmployee(Employee employee) {
+        if (employee == null) return;
+        this.employees.add(employee);
+        employee.getShifts().add(this);
+    }
+
+    public void removeEmployee(Employee employee) {
+        if (employee == null) return;
+        this.employees.remove(employee);
+        employee.getShifts().remove(this);
+    }
 }
