@@ -4,6 +4,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Employee {
@@ -13,10 +17,13 @@ public class Employee {
 
     private String name;
     private String email;
-    private int phone;
+    private String phone;
     private String role;
 
-    public Employee(long id, String name, String email, int phone, String role) {
+    @ManyToMany(mappedBy = "employees")
+    private Set<Shift> shifts = new HashSet<>();
+
+    public Employee(long id, String name, String email, String phone, String role) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -46,11 +53,11 @@ public class Employee {
         this.email = email;
     }
 
-    public int getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -60,5 +67,13 @@ public class Employee {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Set<Shift> getShifts() {
+        return shifts;
+    }
+
+    public void setShifts(Set<Shift> shifts) {
+        this.shifts = shifts;
     }
 }
