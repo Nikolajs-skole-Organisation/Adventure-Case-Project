@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.ShiftAssignmentDTO;
+import com.example.backend.dto.ShiftDTO;
 import com.example.backend.dto.ShiftMapper;
 import com.example.backend.exception.NotFoundException;
 import com.example.backend.model.Employee;
@@ -8,6 +9,9 @@ import com.example.backend.model.Shift;
 import com.example.backend.repository.EmployeeRepository;
 import com.example.backend.repository.ShiftRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ShiftServiceImpl implements ShiftService {
@@ -19,6 +23,16 @@ public class ShiftServiceImpl implements ShiftService {
         this.shiftRepository = shiftRepository;
         this.employeeRepository = employeeRepository;
         this.shiftMapper = shiftMapper;
+    }
+
+    @Override
+    public List<ShiftDTO.ShiftDto> getAllShifts() {
+        List<Shift> shifts = shiftRepository.findAll();
+        List<ShiftDTO.ShiftDto> out = new ArrayList<>();
+        for (Shift s : shifts) {
+            out.add(shiftMapper.toDto(s));
+        }
+        return out;
     }
 
     @Override
