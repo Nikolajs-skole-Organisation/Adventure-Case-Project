@@ -1,4 +1,4 @@
-package com.example.backend.common;
+package com.example.backend.config;
 
 import com.example.backend.model.Activity;
 import com.example.backend.model.Employee;
