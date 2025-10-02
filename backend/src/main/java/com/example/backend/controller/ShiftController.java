@@ -1,4 +1,31 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.ShiftAssignmentDTO;
+import com.example.backend.service.ShiftService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/shifts")
 public class ShiftController {
+
+    private final ShiftService shiftService;
+
+    public ShiftController(ShiftService shiftService) {
+        this.shiftService = shiftService;
+    }
+
+    @PostMapping("/{shiftId}/assignments")
+    public ResponseEntity<ShiftAssignmentDTO.ShiftAssignmentDto> assignEmployeeToShift(
+            @PathVariable Long shiftId,
+            @RequestBody ShiftAssignmentDTO.ShiftAssignmentDto dto) {
+        ShiftAssignmentDTO.ShiftAssignmentDto created = shiftService.assignEmployeeToShift(shiftId, dto.employeeId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+
+    }
 }
