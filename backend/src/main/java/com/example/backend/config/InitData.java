@@ -15,15 +15,10 @@ import java.util.List;
 @Component
 public class InitData implements CommandLineRunner {
 
-    private final ShiftRepository shiftRepository;
-    private final EmployeeRepository employeeRepository;
+
     private final ActivityRepository activityRepository;
 
-    public InitData(ShiftRepository shiftRepository,
-                    EmployeeRepository employeeRepository,
-                    ActivityRepository activityRepository) {
-        this.shiftRepository = shiftRepository;
-        this.employeeRepository = employeeRepository;
+    public InitData(ActivityRepository activityRepository) {
         this.activityRepository = activityRepository;
     }
 
