@@ -7,7 +7,7 @@ import java.util.List;
 public interface ActivityService {
     ActivityDTO.activityDto createActivity(ActivityDTO.activityDto activityDto);
     List<ActivityDTO.activityDto> getAllActivities();
-    // TODO ActivityDTO.activityDto getActivityById(Long id);
+    ActivityDTO.activityDto getActivityById(Long id);
 
 
 

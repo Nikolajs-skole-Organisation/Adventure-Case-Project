@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("/api/activities")
 public class ActivityController {
 
-    private ActivityService activityService; // TODO Set to final
+    private ActivityService activityService; // TODO Set to final and leanr why it fails
 
 
     @PostMapping
@@ -23,6 +23,11 @@ public class ActivityController {
     @GetMapping
     public ResponseEntity<List<ActivityDTO.activityDto>> getAllActivities() {
         return ResponseEntity.ok(activityService.getAllActivities());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ActivityDTO.activityDto> getActivityById(@PathVariable Long id) {
+        return ResponseEntity.ok(activityService.getActivityById(id));
     }
 
 

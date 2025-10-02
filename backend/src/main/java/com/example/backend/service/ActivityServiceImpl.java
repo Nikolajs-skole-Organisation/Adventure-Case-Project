@@ -2,12 +2,14 @@ package com.example.backend.service;
 
 import com.example.backend.dto.ActivityDTO;
 import com.example.backend.dto.ActivityMapper;
+import com.example.backend.exception.NotFoundException;
 import com.example.backend.model.Activity;
 import com.example.backend.repository.ActivityRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
@@ -38,6 +40,14 @@ public class ActivityServiceImpl implements ActivityService {
         return listOfActivities;
     }
 
-
+    @Override
+    public ActivityDTO.activityDto getActivityById(Long id) {
+        Optional<Activity> activity = activityRepository.findById(id);
+        if (activity.isPresent()) {
+            return activityMapper.toDto(activity.get());
+        } else {
+            throw new NotFoundException("Activity not found with id" + id);
+        }
+    }
 
 }
