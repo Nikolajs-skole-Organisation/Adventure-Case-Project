@@ -12,8 +12,11 @@ import java.util.List;
 @RequestMapping("/api/activities")
 public class ActivityController {
 
-    private ActivityService activityService; // TODO Set to final and leanr why it fails
+    private final ActivityService activityService;
 
+    public ActivityController(ActivityService activityService) {
+        this.activityService = activityService;
+    }
 
     @PostMapping
     public ResponseEntity<ActivityDTO.activityDto> createActivity(@RequestBody ActivityDTO.activityDto activityDto) {
