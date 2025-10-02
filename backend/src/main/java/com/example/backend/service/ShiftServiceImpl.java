@@ -28,11 +28,11 @@ public class ShiftServiceImpl implements ShiftService {
     @Override
     public List<ShiftDTO.ShiftDto> getAllShifts() {
         List<Shift> shifts = shiftRepository.findAll();
-        List<ShiftDTO.ShiftDto> out = new ArrayList<>();
+        List<ShiftDTO.ShiftDto> shiftDtos = new ArrayList<>();
         for (Shift s : shifts) {
-            out.add(shiftMapper.toDto(s));
+            shiftDtos.add(shiftMapper.toDto(s));
         }
-        return out;
+        return shiftDtos;
     }
 
     @Override
