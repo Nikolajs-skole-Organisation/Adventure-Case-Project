@@ -1,17 +1,23 @@
 package com.example.backend.service;
 
 import com.example.backend.model.Reservation;
+import com.example.backend.repository.ReservationRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class ReservationServiceImpl implements ReservationService{
-    public void createNewReservation(Reservation reservation){
 
+    private final ReservationRepository reservationRepository;
+
+    public ReservationServiceImpl(ReservationRepository reservationRepository) {
+        this.reservationRepository = reservationRepository;
     }
 
     @Override
-    public void createReservation(Reservation reservation) {
-
+    public void createReservation(Reservation newReservation) {
+        reservationRepository.save(newReservation);
     }
 
     @Override
