@@ -1,13 +1,12 @@
 package com.example.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "reservation",
+        indexes = @Index(name = "ux_reservation_booking_code", columnList = "bookingCode", unique = true))
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +18,9 @@ public class Reservation {
     private int contactPhone;
     private String contactEmail;
 
+    @Column(nullable = false, unique = true, length = 12)
+    private String bookingCode;
+
     public Reservation(Long id, LocalDateTime startTime, LocalDateTime endTime, int participants, String contactName, int contactPhone, String contactEmail) {
         this.id = id;
         this.startTime = startTime;
@@ -29,13 +31,16 @@ public class Reservation {
         this.contactEmail = contactEmail;
     }
 
-    public Reservation() {}
+    public Reservation() {
+    }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public LocalDateTime getStartTime() {
         return startTime;
@@ -83,5 +88,13 @@ public class Reservation {
 
     public void setContactEmail(String contactEmail) {
         this.contactEmail = contactEmail;
+    }
+
+    public String getBookingCode() {
+        return bookingCode;
+    }
+
+    public void setBookingCode(String bookingCode) {
+        this.bookingCode = bookingCode;
     }
 }

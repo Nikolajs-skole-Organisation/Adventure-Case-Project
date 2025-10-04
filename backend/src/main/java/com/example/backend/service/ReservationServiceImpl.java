@@ -1,7 +1,9 @@
 package com.example.backend.service;
 
+import com.example.backend.model.BookingCodeGenerator;
 import com.example.backend.model.Reservation;
 import com.example.backend.repository.ReservationRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,15 +12,27 @@ import java.util.List;
 public class ReservationServiceImpl implements ReservationService{
 
     private final ReservationRepository reservationRepository;
+    private final BookingCodeGenerator codeGen;
 
-    public ReservationServiceImpl(ReservationRepository reservationRepository) {
+    public ReservationServiceImpl(ReservationRepository reservationRepository, BookingCodeGenerator codeGenerator) {
         this.reservationRepository = reservationRepository;
+        this.codeGen = codeGenerator;
     }
 
     @Override
     public Reservation createReservation(Reservation newReservation) {
         newReservation.setId(null);
-        return reservationRepository.save(newReservation);
+
+        final int maxAttempts = 5;
+        for (int attempt = 0; attempt <= maxAttempts; attempt++){
+            newReservation.setBookingCode(codeGen.generate());
+            try{
+                return reservationRepository.save(newReservation);
+            } catch (DataIntegrityViolationException e){
+                if (attempt == maxAttempts) throw e;
+            }
+        }
+        throw new IllegalStateException("Unreachable");
     }
 
     @Override
