@@ -1,7 +1,12 @@
 package com.example.backend.controller;
 
+import com.example.backend.model.Reservation;
 import com.example.backend.service.ReservationService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -13,5 +18,9 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-
+    @PostMapping
+    public ResponseEntity<Reservation> createReservation(@RequestBody Reservation newReservation) {
+        Reservation createdReservation = reservationService.createReservation(newReservation);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdReservation);
+    }
 }
