@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReservationServiceImpl implements ReservationService{
@@ -43,11 +44,6 @@ public class ReservationServiceImpl implements ReservationService{
     }
 
     @Override
-    public void cancelReservationById(Long reservationId) {
-
-    }
-
-    @Override
     public void updateReservation(Long reservationId, Reservation updatedReservation) {
 
     }
@@ -60,5 +56,14 @@ public class ReservationServiceImpl implements ReservationService{
     @Override
     public List<Reservation> getAllReservations() {
         return List.of();
+    }
+
+    @Override
+    public void cancelReservationByCode(String bookingCode) {
+        Optional<Reservation> optional = reservationRepository.findByBookingCode(bookingCode);
+        if (optional.isEmpty()){
+            throw new RuntimeException("No reservation could be found with Booking code: " + bookingCode);
+        }
+        reservationRepository.deleteById(optional.get().getId());
     }
 }
