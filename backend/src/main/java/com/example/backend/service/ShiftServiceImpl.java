@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ShiftServiceImpl implements ShiftService {
@@ -36,6 +37,14 @@ public class ShiftServiceImpl implements ShiftService {
             shiftDtos.add(shiftMapper.toDto(s));
         }
         return shiftDtos;
+    }
+
+    @Override
+    public ShiftDTO.ShiftDto getShiftById(Long shiftId) {
+        Shift shift = shiftRepository.findById(shiftId)
+                .orElseThrow(() -> new ShiftNotFoundException("Shift not found with id: " + shiftId));
+
+        return shiftMapper.toDto(shift);
     }
 
     @Override
