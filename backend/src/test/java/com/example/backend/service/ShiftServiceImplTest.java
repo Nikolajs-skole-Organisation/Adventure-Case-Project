@@ -4,6 +4,7 @@ import com.example.backend.dto.ShiftAssignmentDTO;
 import com.example.backend.dto.ShiftDTO;
 import com.example.backend.dto.ShiftMapper;
 import com.example.backend.exception.EmployeeAlreadyAssignedException;
+import com.example.backend.exception.EmployeeNotAssignedException;
 import com.example.backend.exception.EmployeeNotFoundException;
 import com.example.backend.exception.OverlappingShiftException;
 import com.example.backend.exception.ShiftNotFoundException;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
@@ -106,7 +108,7 @@ public class ShiftServiceImplTest {
         when(shiftRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(ShiftNotFoundException.class,
-                ()-> service.getShiftById(99L));
+                () -> service.getShiftById(99L));
     }
 
     // ----- assignEmployeeToShift (successful) -----
@@ -147,7 +149,7 @@ public class ShiftServiceImplTest {
     }
 
     @Test
-    void assignEmployeeToShift_duplicateAssignment () {
+    void assignEmployeeToShift_duplicateAssignment() {
         Employee alreadyAssigned = new Employee();
         alreadyAssigned.setId(10L);
         shift.getEmployees().add(alreadyAssigned);
@@ -160,11 +162,11 @@ public class ShiftServiceImplTest {
     }
 
     @Test
-    void assignEmployeeToShift_overlappingShift () {
+    void assignEmployeeToShift_overlappingShift() {
         Shift existing = new Shift();
-        existing. setId(99L);
-        existing.setStartTime(LocalDateTime.of(2025, 10, 15, 10 ,0));
-        existing.setEndTime(LocalDateTime.of(2025, 10, 15, 11 ,0));
+        existing.setId(99L);
+        existing.setStartTime(LocalDateTime.of(2025, 10, 15, 10, 0));
+        existing.setEndTime(LocalDateTime.of(2025, 10, 15, 11, 0));
         employee.getShifts().add(existing);
 
         when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
@@ -174,4 +176,48 @@ public class ShiftServiceImplTest {
                 () -> service.assignEmployeeToShift(1L, 10L));
     }
 
+    // ----- unassignEmployeeFromShift (successful) -----
+
+    @Test
+    void unassignEmployeeFromShift_successful() {
+        shift.getEmployees().add(employee);
+        employee.getShifts().add(shift);
+
+        when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
+        when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
+        when(shiftRepository.save(shift)).thenReturn(shift);
+
+        service.unassignEmployeeFromShift(1L, 10L);
+
+        assertFalse(shift.getEmployees().contains(employee));
+        assertFalse(employee.getShifts().contains(shift));
+    }
+
+    // ----- unassignEmployeeFromShift (errors) -----
+
+    @Test
+    void unassignEmployeeFromShift_shiftNotFound() {
+        when(shiftRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(ShiftNotFoundException.class,
+                () -> service.unassignEmployeeFromShift(1L, 10L));
+    }
+
+    @Test
+    void unassignEmployeeFromShift_employeeNotFound() {
+        when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
+        when(employeeRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(EmployeeNotFoundException.class,
+                () -> service.unassignEmployeeFromShift(1L, 99L));
+    }
+
+    @Test
+    void unassignEmployeeFromShift_notAssigned() {
+        when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
+        when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
+
+        assertThrows(EmployeeNotAssignedException.class,
+                () -> service.unassignEmployeeFromShift(1L, 10L));
+    }
 }
