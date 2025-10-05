@@ -33,5 +33,10 @@ public class ActivityController {
         return ResponseEntity.ok(activityService.getActivityById(id));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteActivity(@PathVariable Long id) {
+        activityService.deleteActivity(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }

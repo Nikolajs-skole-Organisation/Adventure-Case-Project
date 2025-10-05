@@ -50,4 +50,14 @@ public class ActivityServiceImpl implements ActivityService {
         }
     }
 
+
+    @Override
+    public void deleteActivity(Long id) {
+        if (activityRepository.existsById(id)) {
+            activityRepository.deleteById(id);
+        } else {
+            throw new NotFoundException("Activity not found with id: " + id);
+        }
+    }
+
 }

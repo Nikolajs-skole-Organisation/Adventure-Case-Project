@@ -4,11 +4,7 @@ import com.example.backend.dto.ActivityDTO;
 import com.example.backend.dto.ActivityMapper;
 import com.example.backend.exception.NotFoundException;
 import com.example.backend.model.Activity;
-import com.example.backend.model.Employee;
-import com.example.backend.model.Shift;
 import com.example.backend.repository.ActivityRepository;
-import com.example.backend.repository.EmployeeRepository;
-import com.example.backend.repository.ShiftRepository;
 import com.example.backend.service.ActivityServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
