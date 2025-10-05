@@ -75,6 +75,40 @@ public class ShiftServiceImplTest {
         assertEquals(2L, shiftDtos.get(1).id());
     }
 
+    // ----- getAllShifts -----
+
+    @Test
+    void getAllShifts_noShifts() {
+        when(shiftRepository.findAll()).thenReturn(List.of());
+
+        List<ShiftDTO.ShiftDto> shiftDtos = service.getAllShifts();
+
+        assertTrue(shiftDtos.isEmpty(), "Expected an empty list when no shifts exist");
+    }
+
+    // ----- getShiftById (found) -----
+
+    @Test
+    void getShiftById_found() {
+        when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
+        ShiftDTO.ShiftDto expected = new ShiftDTO.ShiftDto(1L, null, null, null);
+        when(shiftMapper.toDto(shift)).thenReturn(expected);
+
+        ShiftDTO.ShiftDto actual = service.getShiftById(1L);
+
+        assertEquals(expected, actual);
+    }
+
+    // ----- getShiftById (not found) -----
+
+    @Test
+    void getShiftById_notFound() {
+        when(shiftRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(ShiftNotFoundException.class,
+                ()-> service.getShiftById(99L));
+    }
+
     // ----- assignEmployeeToShift (successful) -----
 
     @Test
