@@ -4,6 +4,7 @@ import com.example.backend.dto.ShiftAssignmentDTO;
 import com.example.backend.dto.ShiftDTO;
 import com.example.backend.dto.ShiftMapper;
 import com.example.backend.exception.EmployeeAlreadyAssignedException;
+import com.example.backend.exception.EmployeeNotAssignedException;
 import com.example.backend.exception.EmployeeNotFoundException;
 import com.example.backend.exception.OverlappingShiftException;
 import com.example.backend.exception.ShiftNotFoundException;
@@ -80,5 +81,29 @@ public class ShiftServiceImpl implements ShiftService {
 
         // Maps to DTO
         return shiftMapper.toDto(saved, employee);
+    }
+
+    @Override
+    public void unassignEmployeeFromShift(Long shiftId, Long employeeId) {
+
+        // Checks if shift is found
+        Shift shift = shiftRepository.findById(shiftId)
+                .orElseThrow(() -> new ShiftNotFoundException("Shift not found with id: " + shiftId));
+
+        // Checks if employee is found
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id:" + employeeId));
+
+        // Try to remove employee from shift
+        boolean removed = shift.getEmployees().remove(employee);
+        if (!removed) {
+            throw new EmployeeNotAssignedException("Employee is not assigned to this shift");
+        }
+
+        // Make sure shift is also removed from employee
+        employee.getShifts().remove(shift);
+
+        // Saves the shift after unassigning employee
+        shiftRepository.save(shift);
     }
 }
