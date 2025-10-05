@@ -1,7 +1,6 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.ReservationDTO;
-import com.example.backend.model.Reservation;
 import com.example.backend.service.ReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +27,8 @@ public class ReservationController {
         try {
             reservationService.cancelReservationByCode(bookingCode);
             return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 

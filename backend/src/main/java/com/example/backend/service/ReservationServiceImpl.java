@@ -62,7 +62,7 @@ public class ReservationServiceImpl implements ReservationService{
     public void cancelReservationByCode(String bookingCode) {
         Optional<Reservation> optional = reservationRepository.findByBookingCode(bookingCode);
         if (optional.isEmpty()){
-            throw new RuntimeException("No reservation could be found with Booking code: " + bookingCode);
+            throw new IllegalArgumentException("No reservation could be found with Booking code: " + bookingCode);
         }
         reservationRepository.deleteById(optional.get().getId());
     }

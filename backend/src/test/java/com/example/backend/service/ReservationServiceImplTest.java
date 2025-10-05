@@ -13,10 +13,11 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ReservationServiceImplTest {
@@ -62,5 +63,49 @@ class ReservationServiceImplTest {
         assertEquals("22712123", saved.contactPhone());
         assertEquals("nikolaja12@hotmail.com", saved.contactEmail());
         assertEquals("RSV-TEST123", saved.bookingCode());
+    }
+
+    @Test
+    void cancelReservationByCode_deletes_whenfound() {
+        String code = "M8DXC6VS2E";
+        Reservation r = new Reservation();
+        r.setId(123L);
+        r.setBookingCode(code);
+
+        when(reservationRepository.findByBookingCode(code)).thenReturn(Optional.of(r));
+
+        assertDoesNotThrow(() -> reservationService.cancelReservationByCode(code));
+
+        verify(reservationRepository).findByBookingCode(code);
+        verify(reservationRepository).deleteById(123L);
+        verifyNoMoreInteractions(reservationRepository);
+    }
+
+    @Test
+    void cancelReservationByCode_throws_whenNothingFound(){
+        String code = "NOPE";
+        when(reservationRepository.findByBookingCode(code)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () -> reservationService.cancelReservationByCode(code));
+
+        verify(reservationRepository).findByBookingCode(code);
+        verify(reservationRepository, never()).delete(any());
+    }
+
+    @Test
+    void cancelReservationByCode_throws_whenNotFound(){
+        String code = "NOTFOUND";
+
+        when(reservationRepository.findByBookingCode(code))
+                .thenReturn(Optional.empty());
+
+        RuntimeException ex = assertThrows(IllegalArgumentException.class,
+                () -> reservationService.cancelReservationByCode(code));
+
+        assertTrue(ex.getMessage().contains("No reservation could be found with Booking code: " + code));
+
+        verify(reservationRepository).findByBookingCode(code);
+        verify(reservationRepository, never()).deleteById(any());
+        verifyNoMoreInteractions(reservationRepository);
     }
 }
