@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.ReservationDTO;
 import com.example.backend.model.Reservation;
 import com.example.backend.service.ReservationService;
 import org.springframework.http.HttpStatus;
@@ -19,8 +20,8 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(@RequestBody Reservation newReservation) {
-        Reservation createdReservation = reservationService.createReservation(newReservation);
+    public ResponseEntity<ReservationDTO> createReservation(@RequestBody ReservationDTO newReservation) {
+        ReservationDTO createdReservation = reservationService.createReservation(newReservation);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdReservation);
     }
 }

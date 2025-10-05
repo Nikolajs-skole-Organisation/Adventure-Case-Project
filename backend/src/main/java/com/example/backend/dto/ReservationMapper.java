@@ -6,10 +6,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class ReservationMapper {
 
-    public ReservationDTO toDto(Reservation reservation){
+    public ReservationDTO toDto(Reservation reservation) {
         if (reservation == null) return null;
-        return new ReservationDTO(reservation.getStartTime(), reservation.getEndTime(), reservation.getParticipants(),
-                reservation.getContactName(), reservation.getContactPhone(), reservation.getContactEmail());
+        return new ReservationDTO(
+                reservation.getStartTime(),
+                reservation.getEndTime(),
+                reservation.getParticipants(),
+                reservation.getContactName(),
+                reservation.getContactPhone(),
+                reservation.getContactEmail(),
+                reservation.getBookingCode()
+        );
     }
 
     public Reservation toEntity(ReservationDTO reservationDto) {

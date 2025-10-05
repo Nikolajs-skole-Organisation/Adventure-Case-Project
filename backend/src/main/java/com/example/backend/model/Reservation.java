@@ -15,13 +15,13 @@ public class Reservation {
     private LocalDateTime endTime;
     private int participants;
     private String contactName;
-    private int contactPhone;
+    private String contactPhone;
     private String contactEmail;
 
     @Column(nullable = false, unique = true, length = 12)
     private String bookingCode;
 
-    public Reservation(Long id, LocalDateTime startTime, LocalDateTime endTime, int participants, String contactName, int contactPhone, String contactEmail) {
+    public Reservation(Long id, LocalDateTime startTime, LocalDateTime endTime, int participants, String contactName, String contactPhone, String contactEmail) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -74,11 +74,11 @@ public class Reservation {
         this.contactName = contactName;
     }
 
-    public int getContactPhone() {
+    public String getContactPhone() {
         return contactPhone;
     }
 
-    public void setContactPhone(int contactPhone) {
+    public void setContactPhone(String contactPhone) {
         this.contactPhone = contactPhone;
     }
 

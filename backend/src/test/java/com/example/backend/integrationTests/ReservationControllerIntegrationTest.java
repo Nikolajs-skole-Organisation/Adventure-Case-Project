@@ -1,6 +1,7 @@
 package com.example.backend.integrationTests;
 
 import com.example.backend.controller.ReservationController;
+import com.example.backend.dto.ReservationDTO;
 import com.example.backend.model.Reservation;
 import com.example.backend.service.ReservationService;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -27,12 +30,19 @@ public class ReservationControllerIntegrationTest {
 
     @Test
     void createReservation_returnCreated() throws Exception {
-        Reservation mockReservation = new Reservation();
-        mockReservation.setId(1L);
-        mockReservation.setBookingCode("RSV-TEST123");
+        ReservationDTO returned =
+                new ReservationDTO(
+                        LocalDateTime.parse("2025-10-05T16:30:00"),
+                        LocalDateTime.parse("2025-10-05T18:00:00"),
+                        4,
+                        "John Doe",
+                        "12345678",
+                        "john@example.com",
+                        "RSV-TEST123"
+                );
 
-        when(reservationService.createReservation(any(Reservation.class)))
-                .thenReturn(mockReservation);
+        when(reservationService.createReservation(any(ReservationDTO.class)))
+                .thenReturn(returned);
 
         String body = """
                 {
@@ -49,6 +59,8 @@ public class ReservationControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.contactName").value("John Doe"))
+                .andExpect(jsonPath("$.participants").value(4))
                 .andExpect(jsonPath("$.bookingCode").value("RSV-TEST123"));
     }
 }

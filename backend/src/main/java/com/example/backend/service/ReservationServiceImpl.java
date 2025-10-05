@@ -1,5 +1,7 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.ReservationDTO;
+import com.example.backend.dto.ReservationMapper;
 import com.example.backend.model.BookingCodeGenerator;
 import com.example.backend.model.Reservation;
 import com.example.backend.repository.ReservationRepository;
@@ -13,21 +15,26 @@ public class ReservationServiceImpl implements ReservationService{
 
     private final ReservationRepository reservationRepository;
     private final BookingCodeGenerator codeGen;
+    private final ReservationMapper reservationMapper;
 
-    public ReservationServiceImpl(ReservationRepository reservationRepository, BookingCodeGenerator codeGenerator) {
+    public ReservationServiceImpl(ReservationRepository reservationRepository, BookingCodeGenerator codeGenerator,
+                                  ReservationMapper reservationMapper) {
         this.reservationRepository = reservationRepository;
         this.codeGen = codeGenerator;
+        this.reservationMapper = reservationMapper;
     }
 
     @Override
-    public Reservation createReservation(Reservation newReservation) {
+    public ReservationDTO createReservation(ReservationDTO newReservationDto) {
+        Reservation newReservation = reservationMapper.toEntity(newReservationDto);
         newReservation.setId(null);
 
         final int maxAttempts = 5;
         for (int attempt = 0; attempt <= maxAttempts; attempt++){
             newReservation.setBookingCode(codeGen.generate());
             try{
-                return reservationRepository.save(newReservation);
+                Reservation savedReservation = reservationRepository.save(newReservation);
+                return reservationMapper.toDto(savedReservation);
             } catch (DataIntegrityViolationException e){
                 if (attempt == maxAttempts) throw e;
             }
