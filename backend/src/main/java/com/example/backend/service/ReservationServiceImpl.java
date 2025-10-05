@@ -25,7 +25,7 @@ public class ReservationServiceImpl implements ReservationService{
     }
 
     @Override
-    public ReservationDTO createReservation(ReservationDTO newReservationDto) {
+    public ReservationDTO.ReservationResponse createReservation(ReservationDTO.CreateReservationRequest newReservationDto) {
         Reservation newReservation = reservationMapper.toEntity(newReservationDto);
         newReservation.setId(null);
 
@@ -34,7 +34,7 @@ public class ReservationServiceImpl implements ReservationService{
             newReservation.setBookingCode(codeGen.generate());
             try{
                 Reservation savedReservation = reservationRepository.save(newReservation);
-                return reservationMapper.toDto(savedReservation);
+                return reservationMapper.toResponse(savedReservation);
             } catch (DataIntegrityViolationException e){
                 if (attempt == maxAttempts) throw e;
             }

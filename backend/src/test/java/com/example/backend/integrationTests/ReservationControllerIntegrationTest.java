@@ -30,8 +30,8 @@ public class ReservationControllerIntegrationTest {
 
     @Test
     void createReservation_returnCreated() throws Exception {
-        ReservationDTO returned =
-                new ReservationDTO(
+        ReservationDTO.ReservationResponse returned =
+                new ReservationDTO.ReservationResponse(
                         LocalDateTime.parse("2025-10-05T16:30:00"),
                         LocalDateTime.parse("2025-10-05T18:00:00"),
                         4,
@@ -41,7 +41,7 @@ public class ReservationControllerIntegrationTest {
                         "RSV-TEST123"
                 );
 
-        when(reservationService.createReservation(any(ReservationDTO.class)))
+        when(reservationService.createReservation(any(ReservationDTO.CreateReservationRequest.class)))
                 .thenReturn(returned);
 
         String body = """

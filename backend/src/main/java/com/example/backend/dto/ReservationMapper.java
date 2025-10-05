@@ -6,9 +6,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ReservationMapper {
 
-    public ReservationDTO toDto(Reservation reservation) {
+
+    public ReservationDTO.ReservationResponse toResponse(Reservation reservation) {
         if (reservation == null) return null;
-        return new ReservationDTO(
+        return new ReservationDTO.ReservationResponse(
                 reservation.getStartTime(),
                 reservation.getEndTime(),
                 reservation.getParticipants(),
@@ -19,8 +20,9 @@ public class ReservationMapper {
         );
     }
 
-    public Reservation toEntity(ReservationDTO reservationDto) {
+    public Reservation toEntity(ReservationDTO.CreateReservationRequest reservationDto) {
         if (reservationDto == null) return null;
+
         Reservation r = new Reservation();
         r.setStartTime(reservationDto.startTime());
         r.setEndTime(reservationDto.endTime());

@@ -35,14 +35,13 @@ class ReservationServiceImplTest {
 
     @Test
     void createReservation_mapsAndGeneratesCode() {
-        ReservationDTO input = new ReservationDTO(
+        ReservationDTO.CreateReservationRequest input = new ReservationDTO.CreateReservationRequest(
                 LocalDateTime.of(2025,10,5,16,30),
                 LocalDateTime.of(2025,10,5,18, 0),
                 4,
                 "Nikolaj Albrektsen",
                 "22712123",
-                "nikolaja12@hotmail.com",
-                null
+                "nikolaja12@hotmail.com"
         );
 
         when(codeGen.generate()).thenReturn("RSV-TEST123");
@@ -54,7 +53,7 @@ class ReservationServiceImplTest {
                     return r;
                 });
 
-        ReservationDTO saved = reservationService.createReservation(input);
+        ReservationDTO.ReservationResponse saved = reservationService.createReservation(input);
 
         assertEquals("Nikolaj Albrektsen", saved.contactName());
         assertEquals(4, saved.participants());
