@@ -184,9 +184,41 @@ public class ActivityServiceImplTest {
         // Act & Assert
         assertThrows(NotFoundException.class, () -> activityServiceImpl.getActivityById(999L));
         verify(activityRepository, times(1)).findById(999L);
+    }
+
+    // Tests that deleteActivity() deletes an activity when it exists in the repository
+    @Test
+    void deleteActivity_WhenExists_ShouldDeleteSuccessfully() {
+
+        // Arrange
+        Long activityId = activity.getId();
+        when(activityRepository.existsById(activityId)).thenReturn(true);
+
+        // Act
+        activityServiceImpl.deleteActivity(activityId);
+
+        // Assert
+        verify(activityRepository, times(1)).existsById(activityId);
+        verify(activityRepository, times(1)).deleteById(activityId);
+        verifyNoMoreInteractions(activityRepository);
+    }
 
 
+    // Tests that deleteActivity() throws NotFoundException when the activity does not exist
+    @Test
+    void deleteActivity_WhenNotFound_ShouldThrowException() {
 
+        // Arrange
+        Long activityId = 999L;
+        when(activityRepository.existsById(activityId)).thenReturn(false);
+
+        // Act & Assert
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> activityServiceImpl.deleteActivity(activityId));
+
+        assertEquals("Activity not found with id: 999", exception.getMessage());
+        verify(activityRepository, times(1)).existsById(activityId);
+        verify(activityRepository, never()).deleteById(anyLong());
     }
 
 }
