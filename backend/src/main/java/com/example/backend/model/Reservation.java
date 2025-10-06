@@ -1,13 +1,12 @@
 package com.example.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "reservation",
+        indexes = @Index(name = "ux_reservation_booking_code", columnList = "bookingCode", unique = true))
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,10 +15,13 @@ public class Reservation {
     private LocalDateTime endTime;
     private int participants;
     private String contactName;
-    private int contactPhone;
+    private String contactPhone;
     private String contactEmail;
 
-    public Reservation(Long id, LocalDateTime startTime, LocalDateTime endTime, int participants, String contactName, int contactPhone, String contactEmail) {
+    @Column(nullable = false, unique = true, length = 12)
+    private String bookingCode;
+
+    public Reservation(Long id, LocalDateTime startTime, LocalDateTime endTime, int participants, String contactName, String contactPhone, String contactEmail) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -29,10 +31,15 @@ public class Reservation {
         this.contactEmail = contactEmail;
     }
 
-    public Reservation() {}
+    public Reservation() {
+    }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public LocalDateTime getStartTime() {
@@ -67,11 +74,11 @@ public class Reservation {
         this.contactName = contactName;
     }
 
-    public int getContactPhone() {
+    public String getContactPhone() {
         return contactPhone;
     }
 
-    public void setContactPhone(int contactPhone) {
+    public void setContactPhone(String contactPhone) {
         this.contactPhone = contactPhone;
     }
 
@@ -81,5 +88,13 @@ public class Reservation {
 
     public void setContactEmail(String contactEmail) {
         this.contactEmail = contactEmail;
+    }
+
+    public String getBookingCode() {
+        return bookingCode;
+    }
+
+    public void setBookingCode(String bookingCode) {
+        this.bookingCode = bookingCode;
     }
 }
