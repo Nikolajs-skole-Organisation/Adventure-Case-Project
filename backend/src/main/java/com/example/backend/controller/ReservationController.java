@@ -7,6 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Controller
 @RequestMapping("/api/reservation")
 public class ReservationController {
@@ -32,4 +35,20 @@ public class ReservationController {
         }
     }
 
+    @GetMapping
+    public ResponseEntity<?> listForDate(@RequestParam(value = "date", required = false) String dateStr) {
+        LocalDate date = (dateStr == null || dateStr.isBlank()) ? LocalDate.now() : LocalDate.parse(dateStr);
+
+        List<ReservationDTO.ReservationResponse> list = reservationService.getReservationsForDate(date);
+        if (list.isEmpty()) {
+            return ResponseEntity.ok("No reservations today");
+        }
+        return ResponseEntity.ok(list);
+    }
+
+    @PostMapping("/{bookingCode}/confirm")
+    public ResponseEntity<Void> confirm(@PathVariable String bookingCode) {
+        reservationService.confirmByBookingCode(bookingCode);
+        return ResponseEntity.noContent().build();
+    }
 }
