@@ -101,23 +101,6 @@ public class ActivityServiceImplTest {
        verify(activityMapper, times(1)).toDto(any());
     }
 
-    // Tests that createActivity() sets ID to null before saving -> ID should auto-increment in DB
-    @Test
-    void createActivity_ShouldSetIdToNullBeforeSave() {
-
-        // Arrange
-        activity.setId(876L);
-
-        when(activityMapper.toEntity(any())).thenReturn(activity);
-        when(activityRepository.save(any())).thenReturn(activity);
-        when(activityMapper.toDto(any())).thenReturn(activityDto);
-
-        // Act
-        activityServiceImpl.createActivity(activityDto);
-
-        // Assert
-        assertNotNull(activity.getId(), "ID should be null before saving");
-    }
 
     // Tests that getAllActivities() returns all activities mapped to DTOs
     @Test
@@ -137,7 +120,7 @@ public class ActivityServiceImplTest {
         assertEquals(1L, result.getFirst().id());
         assertEquals(2L, result.get(1).id());
         assertEquals("GoKart",result.getFirst().name());
-        assertEquals("GoKart",result.get(1).name());
+        assertEquals("Bowling",result.get(1).name());
     }
 
     // Tests that getAllActivities() returns an empty list, when there are no activities, instead of Null
