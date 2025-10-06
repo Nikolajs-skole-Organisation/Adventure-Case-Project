@@ -1,27 +1,36 @@
 package com.example.backend.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Shift {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private long id;
-    private long activityId;
+
+    @ManyToOne
+    private Activity activity;
+
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private int Capacity;
 
-    public Shift(long id, long activityId, LocalDateTime startTime, LocalDateTime endTime, int capacity) {
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<Employee> employees = new HashSet<>();
+
+    public Shift(long id, LocalDateTime startTime, LocalDateTime endTime, int capacity) {
         this.id = id;
-        this.activityId = activityId;
         this.startTime = startTime;
         this.endTime = endTime;
         Capacity = capacity;
@@ -33,12 +42,16 @@ public class Shift {
         return id;
     }
 
-    public long getActivityId() {
-        return activityId;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public void setActivityId(long activityId) {
-        this.activityId = activityId;
+    public Activity getActivity() {
+        return activity;
+    }
+
+    public void setActivity(Activity activity) {
+        this.activity = activity;
     }
 
     public LocalDateTime getStartTime() {
@@ -63,5 +76,26 @@ public class Shift {
 
     public void setCapacity(int capacity) {
         Capacity = capacity;
+    }
+
+    public Set<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(Set<Employee> employees) {
+        this.employees = employees;
+    }
+
+    // Helper methods
+    public void addEmployee(Employee employee) {
+        if (employee == null) return;
+        this.employees.add(employee);
+        employee.getShifts().add(this);
+    }
+
+    public void removeEmployee(Employee employee) {
+        if (employee == null) return;
+        this.employees.remove(employee);
+        employee.getShifts().remove(this);
     }
 }

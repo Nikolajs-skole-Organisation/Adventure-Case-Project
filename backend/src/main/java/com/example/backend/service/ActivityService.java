@@ -9,7 +9,4 @@ public interface ActivityService {
     List<ActivityDTO.activityDto> getAllActivities();
     ActivityDTO.activityDto getActivityById(Long id);
     void deleteActivity(Long id);
-
-
-
 }
