@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface ShiftService {
     List<ShiftDTO.ShiftDto> getAllShifts();
+    ShiftDTO.ShiftDto getShiftById(Long shiftId);
     ShiftAssignmentDTO.ShiftAssignmentDto assignEmployeeToShift(Long shiftId, Long employeeId);
 }

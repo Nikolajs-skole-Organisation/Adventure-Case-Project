@@ -29,6 +29,11 @@ public class ShiftController {
         return ResponseEntity.ok(shiftService.getAllShifts());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ShiftDTO.ShiftDto> getShiftById(@PathVariable Long id) {
+        return ResponseEntity.ok(shiftService.getShiftById(id));
+    }
+
     @PostMapping("/{shiftId}/employees")
     public ResponseEntity<ShiftAssignmentDTO.ShiftAssignmentDto> assignEmployeeToShift(
             @PathVariable Long shiftId,
