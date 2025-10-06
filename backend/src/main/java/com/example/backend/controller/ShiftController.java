@@ -5,6 +5,7 @@ import com.example.backend.dto.ShiftDTO;
 import com.example.backend.service.ShiftService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,9 +30,9 @@ public class ShiftController {
         return ResponseEntity.ok(shiftService.getAllShifts());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ShiftDTO.ShiftDto> getShiftById(@PathVariable Long id) {
-        return ResponseEntity.ok(shiftService.getShiftById(id));
+    @GetMapping("/{shiftId}")
+    public ResponseEntity<ShiftDTO.ShiftDto> getShiftById(@PathVariable Long shiftId) {
+        return ResponseEntity.ok(shiftService.getShiftById(shiftId));
     }
 
     @PostMapping("/{shiftId}/employees")
@@ -40,5 +41,13 @@ public class ShiftController {
             @RequestBody ShiftAssignmentDTO.ShiftAssignmentDto dto) {
         ShiftAssignmentDTO.ShiftAssignmentDto created = shiftService.assignEmployeeToShift(shiftId, dto.employeeId());
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @DeleteMapping ("/{shiftId}/employees/{employeeId}")
+    public ResponseEntity<Void> unassignEmployeeFromShift(
+            @PathVariable Long shiftId,
+            @PathVariable Long employeeId) {
+        shiftService.unassignEmployeeFromShift(shiftId, employeeId);
+        return ResponseEntity.noContent().build();
     }
 }
