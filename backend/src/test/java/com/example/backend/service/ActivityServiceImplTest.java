@@ -1,11 +1,10 @@
-package com.example.backend.unitTest;
+package com.example.backend.service;
 
 import com.example.backend.dto.ActivityDTO;
 import com.example.backend.dto.ActivityMapper;
 import com.example.backend.exception.NotFoundException;
 import com.example.backend.model.Activity;
 import com.example.backend.repository.ActivityRepository;
-import com.example.backend.service.ActivityServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
