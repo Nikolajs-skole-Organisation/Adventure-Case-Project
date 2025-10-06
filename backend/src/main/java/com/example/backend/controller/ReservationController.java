@@ -1,14 +1,11 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.ReservationDTO;
-import com.example.backend.model.Reservation;
 import com.example.backend.service.ReservationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/api/reservation")
@@ -24,4 +21,15 @@ public class ReservationController {
         ReservationDTO.ReservationResponse createdReservation = reservationService.createReservation(newReservation);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdReservation);
     }
+
+    @DeleteMapping("/{bookingCode}")
+    public ResponseEntity<Void> deleteReservation(@PathVariable String bookingCode) {
+        try {
+            reservationService.cancelReservationByCode(bookingCode);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
 }
