@@ -4,8 +4,11 @@ import com.example.backend.dto.ReservationDTO;
 import com.example.backend.dto.ReservationMapper;
 import com.example.backend.model.BookingCodeGenerator;
 import com.example.backend.model.Reservation;
+import com.example.backend.model.ReservationSpecification;
 import com.example.backend.repository.ReservationRepository;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -89,5 +92,10 @@ public class ReservationServiceImpl implements ReservationService{
             r.setConfirmed(true);
             reservationRepository.save(r);
         }
+    }
+
+    @Override
+    public Page<Reservation> search(String query, Pageable pageable){
+        return reservationRepository.findAll(ReservationSpecification.search(query), pageable);
     }
 }
