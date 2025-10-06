@@ -16,7 +16,8 @@ public class ReservationMapper {
                 reservation.getContactName(),
                 reservation.getContactPhone(),
                 reservation.getContactEmail(),
-                reservation.getBookingCode()
+                reservation.getBookingCode(),
+                reservation.isConfirmed()
         );
     }
 
