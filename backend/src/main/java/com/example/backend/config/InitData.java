@@ -1,16 +1,10 @@
 package com.example.backend.config;
 
 import com.example.backend.model.Activity;
-import com.example.backend.model.Employee;
-import com.example.backend.model.Shift;
 import com.example.backend.repository.ActivityRepository;
-import com.example.backend.repository.EmployeeRepository;
-import com.example.backend.repository.ShiftRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.util.List;
 
 @Component
 public class InitData implements CommandLineRunner {
@@ -35,6 +29,6 @@ public class InitData implements CommandLineRunner {
         goKart.setMaxParticipant(8);
         activityRepository.save(goKart);
 
-//
+
     }
 }
