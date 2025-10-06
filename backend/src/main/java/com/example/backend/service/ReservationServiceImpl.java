@@ -8,6 +8,9 @@ import com.example.backend.repository.ReservationRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,5 +68,26 @@ public class ReservationServiceImpl implements ReservationService{
             throw new IllegalArgumentException("No reservation could be found with Booking code: " + bookingCode);
         }
         reservationRepository.deleteById(optional.get().getId());
+    }
+
+    @Override
+    public List<ReservationDTO.ReservationResponse> getReservationsForDate(LocalDate date) {
+        ZoneId zone = ZoneId.of("Europe/Copenhagen");
+        LocalDateTime start = date.atStartOfDay();
+        LocalDateTime end = date.plusDays(1).atStartOfDay();
+
+        return reservationRepository.findAllByStartTimeBetweenAndConfirmedFalseOrderByStartTimeAsc(start, end)
+                .stream()
+                .map(reservationMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    public void confirmByBookingCode(String bookingCode) {
+        Reservation r = reservationRepository.findByBookingCode(bookingCode).orElseThrow(() -> new IllegalArgumentException("Reservation not found for code: " + bookingCode));
+        if (!r.isConfirmed()) {
+            r.setConfirmed(true);
+            reservationRepository.save(r);
+        }
     }
 }

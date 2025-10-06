@@ -3,6 +3,7 @@ package com.example.backend.service;
 import com.example.backend.dto.ReservationDTO;
 import com.example.backend.model.Reservation;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ReservationService {
@@ -11,4 +12,6 @@ public interface ReservationService {
     public Reservation getReservationById(Long id);
     public List<Reservation> getAllReservations();
     public void cancelReservationByCode(String bookingCode);
+    List<ReservationDTO.ReservationResponse> getReservationsForDate(LocalDate date);
+    void confirmByBookingCode(String bookingCode);
 }

@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -18,6 +20,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 
 @WebMvcTest(controllers = ReservationController.class)
 public class ReservationControllerIntegrationTest {
@@ -38,7 +42,8 @@ public class ReservationControllerIntegrationTest {
                         "John Doe",
                         "12345678",
                         "john@example.com",
-                        "RSV-TEST123"
+                        "RSV-TEST123",
+                        false
                 );
 
         when(reservationService.createReservation(any(ReservationDTO.CreateReservationRequest.class)))
@@ -62,5 +67,26 @@ public class ReservationControllerIntegrationTest {
                 .andExpect(jsonPath("$.contactName").value("John Doe"))
                 .andExpect(jsonPath("$.participants").value(4))
                 .andExpect(jsonPath("$.bookingCode").value("RSV-TEST123"));
+    }
+
+    @Test
+    void listForSpecificDate_returnsList_whenExists() throws Exception {
+        var item = new ReservationDTO.ReservationResponse(
+                LocalDateTime.parse("2025-10-06T09:00:00"),
+                LocalDateTime.parse("2025-10-06T10:00:00"),
+                2,
+                "Anna",
+                "11111111",
+                "anna@example.com",
+                "CODE-1",
+                false
+        );
+        when(reservationService.getReservationsForDate(LocalDate.parse("2025-10-06")))
+                .thenReturn(java.util.List.of(item));
+
+        mockMvc.perform(get("/api/reservation?date=2025-10-06"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].bookingCode").value("CODE-1"))
+                .andExpect(jsonPath("$[0].contactName").value("Anna"));
     }
 }

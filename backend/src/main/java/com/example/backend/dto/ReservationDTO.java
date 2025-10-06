@@ -21,7 +21,8 @@ public class ReservationDTO {
             String contactName,
             String contactPhone,
             String contactEmail,
-            String bookingCode
+            String bookingCode,
+            boolean confirmed
     ) {
     }
 }
