@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -107,5 +108,47 @@ class ReservationServiceImplTest {
         verify(reservationRepository).findByBookingCode(code);
         verify(reservationRepository, never()).deleteById(any());
         verifyNoMoreInteractions(reservationRepository);
+    }
+
+    @Test
+    void getReservationsForDate_returnsActiveSortedList() {
+        LocalDate date = LocalDate.of(2025, 10, 6);
+        LocalDateTime s1 = date.atTime(9, 0);
+        LocalDateTime s2 = date.atTime(11, 0);
+
+        Reservation r1 = new Reservation();
+        r1.setId(1L);
+        r1.setStartTime(s1);
+        r1.setEndTime(s1.plusHours(1));
+        r1.setParticipants(2);
+        r1.setContactName("A");
+        r1.setContactPhone("1");
+        r1.setContactEmail("a@ex.com");
+        r1.setBookingCode("CODE-1");
+        r1.setConfirmed(false);
+
+        Reservation r2 = new Reservation();
+        r2.setId(2L);
+        r2.setStartTime(s2);
+        r2.setEndTime(s2.plusHours(1));
+        r2.setParticipants(3);
+        r2.setContactName("B");
+        r2.setContactPhone("2");
+        r2.setContactEmail("b@ex.com");
+        r2.setBookingCode("CODE-2");
+        r2.setConfirmed(false);
+
+        when(reservationRepository
+                .findAllByStartTimeBetweenAndConfirmedFalseOrderByStartTimeAsc(
+                        date.atStartOfDay(), date.plusDays(1).atStartOfDay()))
+                .thenReturn(java.util.List.of(r1, r2));
+
+        var list = reservationService.getReservationsForDate(date);
+
+        assertEquals(2, list.size());
+        assertEquals("CODE-1", list.get(0).bookingCode());
+        assertEquals("CODE-2", list.get(1).bookingCode());
+        assertFalse(list.get(0).confirmed());
+        assertFalse(list.get(1).confirmed());
     }
 }
