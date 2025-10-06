@@ -5,8 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "reservation",
-        indexes = @Index(name = "ux_reservation_booking_code", columnList = "bookingCode", unique = true))
+@Table(name = "reservation", indexes = @Index(name = "ux_reservation_booking_code", columnList = "bookingCode", unique = true))
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +19,9 @@ public class Reservation {
 
     @Column(nullable = false, unique = true, length = 12)
     private String bookingCode;
+
+    @Column(nullable = false)
+    private boolean confirmed = false;
 
     public Reservation(Long id, LocalDateTime startTime, LocalDateTime endTime, int participants, String contactName, String contactPhone, String contactEmail) {
         this.id = id;
@@ -96,5 +98,13 @@ public class Reservation {
 
     public void setBookingCode(String bookingCode) {
         this.bookingCode = bookingCode;
+    }
+
+    public boolean isConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(boolean confirmed) {
+        this.confirmed = confirmed;
     }
 }
