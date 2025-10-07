@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.ReservationDTO;
+import com.example.backend.dto.ReservationPageResponse;
 import com.example.backend.model.Reservation;
 import com.example.backend.service.ReservationService;
 import org.springframework.data.domain.Page;
@@ -61,11 +62,17 @@ public class ReservationController {
     // and list them by startTime in descending order, so the next reservation is first.
     // if more than one result it will list them by startTime in descending order also.
     @GetMapping("/search")
-    public ResponseEntity<Page<Reservation>> search(
-            @RequestParam String query,
-            @PageableDefault(size = 20, sort = "startTime", direction = Sort.Direction.DESC)Pageable pageable) {
+    public ResponseEntity<ReservationPageResponse> search(
+            @RequestParam(name = "query") String query,
+            @PageableDefault(size = 20, sort = "startTime", direction = Sort.Direction.ASC)Pageable pageable) {
 
-        Page<Reservation> result = reservationService.search(query, pageable);
-        return ResponseEntity.ok(result);
+        Page<Reservation> page = reservationService.search(query, pageable);
+        var body = new ReservationPageResponse(
+                page.getContent(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements()
+        );
+        return ResponseEntity.ok(body);
     }
 }

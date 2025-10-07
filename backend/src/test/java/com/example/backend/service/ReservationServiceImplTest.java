@@ -11,7 +11,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
+import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -90,7 +93,7 @@ class ReservationServiceImplTest {
         assertThrows(IllegalArgumentException.class, () -> reservationService.cancelReservationByCode(code));
 
         verify(reservationRepository).findByBookingCode(code);
-        verify(reservationRepository, never()).delete(any());
+        verify(reservationRepository, never()).delete((Reservation) any());
     }
 
     @Test
@@ -151,4 +154,6 @@ class ReservationServiceImplTest {
         assertFalse(list.get(0).confirmed());
         assertFalse(list.get(1).confirmed());
     }
+
+
 }
