@@ -4,6 +4,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Activity {
@@ -17,6 +21,9 @@ public class Activity {
     private int minAge;
     private int minHeight;
     private int maxParticipant;
+
+    @ManyToMany(mappedBy = "activities")
+    private Set<Shift> shifts = new HashSet<>();
 
     public Activity(Long id, String name, String description, int minAge, int minHeight, int maxParticipant) {
         this.id = id;
@@ -75,5 +82,13 @@ public class Activity {
 
     public void setMaxParticipant(int maxParticipant) {
         this.maxParticipant = maxParticipant;
+    }
+
+    public Set<Shift> getShifts() {
+        return shifts;
+    }
+
+    public void setShifts(Set<Shift> shifts) {
+        this.shifts = shifts;
     }
 }

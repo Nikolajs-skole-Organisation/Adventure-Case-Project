@@ -19,8 +19,8 @@ public class Shift {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne
-    private Activity activity;
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<Activity> activities = new HashSet<>();
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -44,14 +44,6 @@ public class Shift {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public Activity getActivity() {
-        return activity;
-    }
-
-    public void setActivity(Activity activity) {
-        this.activity = activity;
     }
 
     public LocalDateTime getStartTime() {
@@ -78,6 +70,14 @@ public class Shift {
         Capacity = capacity;
     }
 
+    public Set<Activity> getActivities() {
+        return activities;
+    }
+
+    public void setActivities(Set<Activity> activities) {
+        this.activities = activities;
+    }
+
     public Set<Employee> getEmployees() {
         return employees;
     }
@@ -87,6 +87,19 @@ public class Shift {
     }
 
     // Helper methods
+
+    public void addActivity(Activity activity) {
+        if (activity == null) return;
+        this.activities.add(activity);
+        activity.getShifts().add(this);
+    }
+
+    public void removeActivity(Activity activity) {
+        if (activity == null) return;
+        this.activities.remove(activity);
+        activity.getShifts().remove(this);
+    }
+
     public void addEmployee(Employee employee) {
         if (employee == null) return;
         this.employees.add(employee);

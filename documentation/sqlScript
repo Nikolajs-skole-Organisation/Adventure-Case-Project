@@ -29,19 +29,28 @@ CREATE TABLE Activity (
 );
 
 -- ------------------------------------------------------------
--- Shift (each shift belongs to an activity)
+-- Shift 
 -- ------------------------------------------------------------
 CREATE TABLE Shift (
     shift_id     INT AUTO_INCREMENT PRIMARY KEY,
-    activity_id  INT NOT NULL,
     start_time   DATETIME NOT NULL,
     end_time     DATETIME NOT NULL,
-    capacity     INT,
+    capacity     INT
+);
+
+-- ------------------------------------------------------------
+-- Shift_Activity 
+-- ------------------------------------------------------------
+CREATE TABLE Shift_Activity (
+    shift_id    INT NOT NULL,
+    activity_id INT NOT NULL,
+    PRIMARY KEY (shift_id, activity_id),
+    FOREIGN KEY (shift_id) REFERENCES Shift(shift_id),
     FOREIGN KEY (activity_id) REFERENCES Activity(activity_id)
 );
 
 -- ------------------------------------------------------------
--- Shift staffing (which employees work on which shift)
+-- Shift staffing 
 -- ------------------------------------------------------------
 CREATE TABLE Shift_Employee (
     shift_id     INT NOT NULL,
@@ -52,7 +61,7 @@ CREATE TABLE Shift_Employee (
 );
 
 -- ------------------------------------------------------------
--- Reservation (customers book into a shift)
+-- Reservation 
 -- ------------------------------------------------------------
 CREATE TABLE Reservation (
     reservation_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -65,7 +74,7 @@ CREATE TABLE Reservation (
 );
 
 -- ------------------------------------------------------------
--- Reservation handling (which employee managed booking)
+-- Reservation handling 
 -- ------------------------------------------------------------
 CREATE TABLE Reservation_Employee (
     reservation_id INT NOT NULL,

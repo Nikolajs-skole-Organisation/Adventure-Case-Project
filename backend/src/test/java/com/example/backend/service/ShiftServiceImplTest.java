@@ -3,11 +3,7 @@ package com.example.backend.service;
 import com.example.backend.dto.ShiftAssignmentDTO;
 import com.example.backend.dto.ShiftDTO;
 import com.example.backend.dto.ShiftMapper;
-import com.example.backend.exception.EmployeeAlreadyAssignedException;
-import com.example.backend.exception.EmployeeNotAssignedException;
-import com.example.backend.exception.EmployeeNotFoundException;
-import com.example.backend.exception.OverlappingShiftException;
-import com.example.backend.exception.ShiftNotFoundException;
+import com.example.backend.exception.*;
 import com.example.backend.model.Employee;
 import com.example.backend.model.Shift;
 import com.example.backend.repository.EmployeeRepository;
@@ -24,14 +20,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ShiftServiceImplTest {
+class ShiftServiceImplTest {
 
     @Mock
     private ShiftRepository shiftRepository;
@@ -62,38 +55,34 @@ public class ShiftServiceImplTest {
     // ----- getAllShifts -----
 
     @Test
-    void getAllShifts() {
+    void getAllShifts_successful() {
         Shift shift2 = new Shift();
         shift2.setId(2L);
 
         when(shiftRepository.findAll()).thenReturn(List.of(shift, shift2));
-        when(shiftMapper.toDto(shift)).thenReturn(new ShiftDTO.ShiftDto(1L, null, null, null));
-        when(shiftMapper.toDto(shift2)).thenReturn(new ShiftDTO.ShiftDto(2L, null, null, null));
+        when(shiftMapper.toDto(shift)).thenReturn(new ShiftDTO.ShiftDto(1L, null, null, null, false));
+        when(shiftMapper.toDto(shift2)).thenReturn(new ShiftDTO.ShiftDto(2L, null, null, null, false));
 
-        List<ShiftDTO.ShiftDto> shiftDtos = service.getAllShifts();
+        List<ShiftDTO.ShiftDto> result = service.getAllShifts();
 
-        assertEquals(2, shiftDtos.size());
-        assertEquals(1L, shiftDtos.getFirst().id());
-        assertEquals(2L, shiftDtos.get(1).id());
+        assertEquals(2, result.size());
+        assertEquals(1L, result.get(0).id());
+        assertEquals(2L, result.get(1).id());
     }
-
-    // ----- getAllShifts -----
 
     @Test
     void getAllShifts_noShifts() {
         when(shiftRepository.findAll()).thenReturn(List.of());
-
-        List<ShiftDTO.ShiftDto> shiftDtos = service.getAllShifts();
-
-        assertTrue(shiftDtos.isEmpty(), "Expected an empty list when no shifts exist");
+        List<ShiftDTO.ShiftDto> result = service.getAllShifts();
+        assertTrue(result.isEmpty());
     }
 
-    // ----- getShiftById (found) -----
+    // ----- getShiftById -----
 
     @Test
     void getShiftById_found() {
         when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
-        ShiftDTO.ShiftDto expected = new ShiftDTO.ShiftDto(1L, null, null, null);
+        ShiftDTO.ShiftDto expected = new ShiftDTO.ShiftDto(1L, null, null, null, false);
         when(shiftMapper.toDto(shift)).thenReturn(expected);
 
         ShiftDTO.ShiftDto actual = service.getShiftById(1L);
@@ -101,26 +90,22 @@ public class ShiftServiceImplTest {
         assertEquals(expected, actual);
     }
 
-    // ----- getShiftById (not found) -----
-
     @Test
     void getShiftById_notFound() {
         when(shiftRepository.findById(99L)).thenReturn(Optional.empty());
-
-        assertThrows(ShiftNotFoundException.class,
-                () -> service.getShiftById(99L));
+        assertThrows(ShiftNotFoundException.class, () -> service.getShiftById(99L));
     }
 
-    // ----- assignEmployeeToShift (successful) -----
+    // ----- assignEmployeeToShift -----
 
     @Test
-    void assignEmployeeShift_successful() {
+    void assignEmployeeToShift_successful() {
         when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
         when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
         when(shiftRepository.save(shift)).thenReturn(shift);
 
-        ShiftAssignmentDTO.ShiftAssignmentDto expected = new ShiftAssignmentDTO.ShiftAssignmentDto(1L, 10L, "Name", "email@example.com", "12345678");
-
+        ShiftAssignmentDTO.ShiftAssignmentDto expected =
+                new ShiftAssignmentDTO.ShiftAssignmentDto(1L, 10L, "Name", "email@example.com", "12345678");
         when(shiftMapper.toDto(shift, employee)).thenReturn(expected);
 
         ShiftAssignmentDTO.ShiftAssignmentDto actual = service.assignEmployeeToShift(1L, 10L);
@@ -129,23 +114,17 @@ public class ShiftServiceImplTest {
         assertTrue(shift.getEmployees().contains(employee));
     }
 
-    // ----- assignEmployeeToShift (errors) -----
-
     @Test
     void assignEmployeeToShift_shiftNotFound() {
-        when(shiftRepository.findById(1L)).thenReturn((Optional.empty()));
-
-        assertThrows(ShiftNotFoundException.class,
-                () -> service.assignEmployeeToShift(1L, 10L));
+        when(shiftRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(ShiftNotFoundException.class, () -> service.assignEmployeeToShift(1L, 10L));
     }
 
     @Test
     void assignEmployeeToShift_employeeNotFound() {
         when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
         when(employeeRepository.findById(10L)).thenReturn(Optional.empty());
-
-        assertThrows(EmployeeNotFoundException.class,
-                () -> service.assignEmployeeToShift(1L, 10L));
+        assertThrows(EmployeeNotFoundException.class, () -> service.assignEmployeeToShift(1L, 10L));
     }
 
     @Test
@@ -154,11 +133,10 @@ public class ShiftServiceImplTest {
         alreadyAssigned.setId(10L);
         shift.getEmployees().add(alreadyAssigned);
 
-        when(shiftRepository.findById(1L)).thenReturn((Optional.of(shift)));
+        when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
         when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
 
-        assertThrows(EmployeeAlreadyAssignedException.class,
-                () -> service.assignEmployeeToShift(1L, 10L));
+        assertThrows(EmployeeAlreadyAssignedException.class, () -> service.assignEmployeeToShift(1L, 10L));
     }
 
     @Test
@@ -172,11 +150,10 @@ public class ShiftServiceImplTest {
         when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
         when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
 
-        assertThrows(OverlappingShiftException.class,
-                () -> service.assignEmployeeToShift(1L, 10L));
+        assertThrows(OverlappingShiftException.class, () -> service.assignEmployeeToShift(1L, 10L));
     }
 
-    // ----- unassignEmployeeFromShift (successful) -----
+    // ----- unassignEmployeeFromShift -----
 
     @Test
     void unassignEmployeeFromShift_successful() {
@@ -193,31 +170,23 @@ public class ShiftServiceImplTest {
         assertFalse(employee.getShifts().contains(shift));
     }
 
-    // ----- unassignEmployeeFromShift (errors) -----
-
     @Test
     void unassignEmployeeFromShift_shiftNotFound() {
         when(shiftRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(ShiftNotFoundException.class,
-                () -> service.unassignEmployeeFromShift(1L, 10L));
+        assertThrows(ShiftNotFoundException.class, () -> service.unassignEmployeeFromShift(1L, 10L));
     }
 
     @Test
     void unassignEmployeeFromShift_employeeNotFound() {
         when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
-        when(employeeRepository.findById(99L)).thenReturn(Optional.empty());
-
-        assertThrows(EmployeeNotFoundException.class,
-                () -> service.unassignEmployeeFromShift(1L, 99L));
+        when(employeeRepository.findById(10L)).thenReturn(Optional.empty());
+        assertThrows(EmployeeNotFoundException.class, () -> service.unassignEmployeeFromShift(1L, 10L));
     }
 
     @Test
     void unassignEmployeeFromShift_notAssigned() {
         when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
         when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
-
-        assertThrows(EmployeeNotAssignedException.class,
-                () -> service.unassignEmployeeFromShift(1L, 10L));
+        assertThrows(EmployeeNotAssignedException.class, () -> service.unassignEmployeeFromShift(1L, 10L));
     }
 }
