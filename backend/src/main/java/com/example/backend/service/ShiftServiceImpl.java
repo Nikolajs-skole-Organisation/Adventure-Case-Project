@@ -50,23 +50,52 @@ public class ShiftServiceImpl implements ShiftService {
 
     @Override
     public ShiftAssignmentDTO.ShiftAssignmentDto assignEmployeeToShift(Long shiftId, Long employeeId) {
+        Shift shift = findShiftById(shiftId);
+        Employee employee = findEmployeeById(employeeId);
 
-        // Checks if shift is found
-        Shift shift = shiftRepository.findById(shiftId)
+        validateAssignment(shift, employee);
+        shift.getEmployees().add(employee);
+
+        Shift saved = shiftRepository.save(shift);
+        return shiftMapper.toDto(saved, employee);
+    }
+
+    @Override
+    public void unassignEmployeeFromShift(Long shiftId, Long employeeId) {
+        Shift shift = findShiftById(shiftId);
+        Employee employee = findEmployeeById(employeeId);
+
+        boolean removed = shift.getEmployees().remove(employee);
+        if (!removed) {
+            throw new EmployeeNotAssignedException("Employee is not assigned to this shift");
+        }
+
+        employee.getShifts().remove(shift);
+        shiftRepository.save(shift);
+    }
+
+    // ----- Helper Methods -----
+
+    private Shift findShiftById(Long shiftId) {
+        return shiftRepository.findById(shiftId)
                 .orElseThrow(() -> new ShiftNotFoundException("Shift not found with id: " + shiftId));
+    }
 
-        // Checks if employee is found
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id:" + employeeId));
+    private Employee findEmployeeById(Long employeeId) {
+        return employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id: " + employeeId));
+    }
 
-        // Checks if employee is already assigned to this shift (prevents duplicates)
+    private void validateAssignment(Shift shift, Employee employee) {
+
+        // Duplicate assignment check
         for (Employee e : shift.getEmployees()) {
-            if (e.getId() == employeeId) {
+            if (e.getId() == employee.getId()) {
                 throw new EmployeeAlreadyAssignedException("Employee already assigned to this shift");
             }
         }
 
-        // Checks if shift overlaps with another shift for this employee (prevents overlaps)
+        // Overlapping shift check
         for (Shift s : employee.getShifts()) {
             boolean overlaps = s.getStartTime().isBefore(shift.getEndTime())
                     && s.getEndTime().isAfter(shift.getStartTime());
@@ -74,36 +103,6 @@ public class ShiftServiceImpl implements ShiftService {
                 throw new OverlappingShiftException("Employee already assigned to an overlapping shift");
             }
         }
-
-        // Assigns this employee to this shift
-        shift.getEmployees().add(employee);
-        Shift saved = shiftRepository.save(shift);
-
-        // Maps to DTO
-        return shiftMapper.toDto(saved, employee);
     }
 
-    @Override
-    public void unassignEmployeeFromShift(Long shiftId, Long employeeId) {
-
-        // Checks if shift is found
-        Shift shift = shiftRepository.findById(shiftId)
-                .orElseThrow(() -> new ShiftNotFoundException("Shift not found with id: " + shiftId));
-
-        // Checks if employee is found
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id:" + employeeId));
-
-        // Try to remove employee from shift
-        boolean removed = shift.getEmployees().remove(employee);
-        if (!removed) {
-            throw new EmployeeNotAssignedException("Employee is not assigned to this shift");
-        }
-
-        // Make sure shift is also removed from employee
-        employee.getShifts().remove(shift);
-
-        // Saves the shift after unassigning employee
-        shiftRepository.save(shift);
-    }
 }
