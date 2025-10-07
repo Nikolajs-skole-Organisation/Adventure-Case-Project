@@ -50,4 +50,15 @@ public class ShiftController {
         shiftService.unassignEmployeeFromShift(shiftId, employeeId);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{shiftId}/activities/{activityId}/employees")
+    public ResponseEntity<ShiftAssignmentDTO.ShiftAssignmentDto> assignEmployeeToActivityShift(
+            @PathVariable Long shiftId,
+            @PathVariable Long activityId,
+            @RequestBody ShiftAssignmentDTO.ShiftAssignmentDto dto) {
+        ShiftAssignmentDTO.ShiftAssignmentDto created = shiftService.assignEmployeeToActivityShift(activityId, shiftId, dto.employeeId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+
 }
