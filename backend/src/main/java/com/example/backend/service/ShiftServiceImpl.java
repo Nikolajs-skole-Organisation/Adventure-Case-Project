@@ -8,6 +8,7 @@ import com.example.backend.exception.EmployeeNotAssignedException;
 import com.example.backend.exception.EmployeeNotFoundException;
 import com.example.backend.exception.OverlappingShiftException;
 import com.example.backend.exception.ShiftNotFoundException;
+import com.example.backend.model.Activity;
 import com.example.backend.model.Employee;
 import com.example.backend.model.Shift;
 import com.example.backend.repository.EmployeeRepository;
@@ -34,8 +35,19 @@ public class ShiftServiceImpl implements ShiftService {
     public List<ShiftDTO.ShiftDto> getAllShifts() {
         List<Shift> shifts = shiftRepository.findAll();
         List<ShiftDTO.ShiftDto> shiftDtos = new ArrayList<>();
+
         for (Shift s : shifts) {
-            shiftDtos.add(shiftMapper.toDto(s));
+            boolean staffed = isShiftFullyStaffed(s);
+            ShiftDTO.ShiftDto dto = shiftMapper.toDto(s);
+
+            dto = new ShiftDTO.ShiftDto(
+                    dto.id(),
+                    dto.startTime(),
+                    dto.endTime(),
+                    dto.employees(),
+                    staffed
+            );
+            shiftDtos.add(dto);
         }
         return shiftDtos;
     }
@@ -74,6 +86,30 @@ public class ShiftServiceImpl implements ShiftService {
         shiftRepository.save(shift);
     }
 
+    @Override
+    public ShiftAssignmentDTO.ShiftAssignmentDto assignEmployeeToActivityShift(Long activityId, Long shiftId, Long employeeId) {
+        Shift shift = findShiftById(shiftId);
+
+        boolean activityFound = false;
+        for (Activity a : shift.getActivities()) {
+            if (a.getId().equals(activityId)) {
+                activityFound = true;
+                break;
+            }
+        }
+        if (!activityFound) {
+            throw new IllegalArgumentException("Shift " + shiftId + " does not contain activity with id: " + activityId);
+        }
+
+        Employee employee = findEmployeeById(employeeId);
+        validateAssignment(shift, employee);
+
+        shift.getEmployees().add(employee);
+        Shift saved = shiftRepository.save(shift);
+
+        return shiftMapper.toDto(saved, employee);
+    }
+
     // ----- Helper Methods -----
 
     private Shift findShiftById(Long shiftId) {
@@ -103,6 +139,11 @@ public class ShiftServiceImpl implements ShiftService {
                 throw new OverlappingShiftException("Employee already assigned to an overlapping shift");
             }
         }
+    }
+
+    private boolean isShiftFullyStaffed(Shift shift) {
+        if (shift == null) return false;
+        return shift.getEmployees().size() >= shift.getActivities().size();
     }
 
 }

@@ -18,11 +18,14 @@ public class ShiftMapper {
             employees.add(new EmployeeDTO.EmployeeDto(e.getId(), e.getName(), e.getEmail(),e.getPhone()));
         }
 
+        boolean staffed = !shift.getEmployees().isEmpty();
+
         return new ShiftDTO.ShiftDto(
                 shift.getId(),
                 shift.getStartTime().toString(),
                 shift.getEndTime().toString(),
-                employees
+                employees,
+                staffed
         );
     }
 
