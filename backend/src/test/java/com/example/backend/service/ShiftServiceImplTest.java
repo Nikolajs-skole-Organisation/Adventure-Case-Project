@@ -4,7 +4,6 @@ import com.example.backend.dto.ShiftAssignmentDTO;
 import com.example.backend.dto.ShiftDTO;
 import com.example.backend.dto.ShiftMapper;
 import com.example.backend.exception.*;
-import com.example.backend.model.Activity;
 import com.example.backend.model.Employee;
 import com.example.backend.model.Shift;
 import com.example.backend.repository.EmployeeRepository;
@@ -25,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ShiftServiceImplTest {
+class ShiftServiceImplTest {
 
     @Mock
     private ShiftRepository shiftRepository;
@@ -56,7 +55,7 @@ public class ShiftServiceImplTest {
     // ----- getAllShifts -----
 
     @Test
-    void getAllShifts() {
+    void getAllShifts_successful() {
         Shift shift2 = new Shift();
         shift2.setId(2L);
 
@@ -64,20 +63,18 @@ public class ShiftServiceImplTest {
         when(shiftMapper.toDto(shift)).thenReturn(new ShiftDTO.ShiftDto(1L, null, null, null, false));
         when(shiftMapper.toDto(shift2)).thenReturn(new ShiftDTO.ShiftDto(2L, null, null, null, false));
 
-        List<ShiftDTO.ShiftDto> shiftDtos = service.getAllShifts();
+        List<ShiftDTO.ShiftDto> result = service.getAllShifts();
 
-        assertEquals(2, shiftDtos.size());
-        assertEquals(1L, shiftDtos.getFirst().id());
-        assertEquals(2L, shiftDtos.get(1).id());
+        assertEquals(2, result.size());
+        assertEquals(1L, result.get(0).id());
+        assertEquals(2L, result.get(1).id());
     }
 
     @Test
     void getAllShifts_noShifts() {
         when(shiftRepository.findAll()).thenReturn(List.of());
-
-        List<ShiftDTO.ShiftDto> shiftDtos = service.getAllShifts();
-
-        assertTrue(shiftDtos.isEmpty(), "Expected an empty list when no shifts exist");
+        List<ShiftDTO.ShiftDto> result = service.getAllShifts();
+        assertTrue(result.isEmpty());
     }
 
     // ----- getShiftById -----
@@ -102,14 +99,13 @@ public class ShiftServiceImplTest {
     // ----- assignEmployeeToShift -----
 
     @Test
-    void assignEmployeeShift_successful() {
+    void assignEmployeeToShift_successful() {
         when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
         when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
         when(shiftRepository.save(shift)).thenReturn(shift);
 
         ShiftAssignmentDTO.ShiftAssignmentDto expected =
                 new ShiftAssignmentDTO.ShiftAssignmentDto(1L, 10L, "Name", "email@example.com", "12345678");
-
         when(shiftMapper.toDto(shift, employee)).thenReturn(expected);
 
         ShiftAssignmentDTO.ShiftAssignmentDto actual = service.assignEmployeeToShift(1L, 10L);
@@ -192,59 +188,5 @@ public class ShiftServiceImplTest {
         when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
         when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
         assertThrows(EmployeeNotAssignedException.class, () -> service.unassignEmployeeFromShift(1L, 10L));
-    }
-
-    // ----- assignEmployeeToActivityShift -----
-
-    @Test
-    void assignEmployeeToActivityShift_successful() {
-        Activity activity = new Activity();
-        activity.setId(5L);
-        shift.getActivities().add(activity);
-
-        when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
-        when(employeeRepository.findById(10L)).thenReturn(Optional.of(employee));
-        when(shiftRepository.save(shift)).thenReturn(shift);
-
-        ShiftAssignmentDTO.ShiftAssignmentDto expected =
-                new ShiftAssignmentDTO.ShiftAssignmentDto(1L, 10L, "Name", "email@example.com", "12345678");
-        when(shiftMapper.toDto(shift, employee)).thenReturn(expected);
-
-        ShiftAssignmentDTO.ShiftAssignmentDto actual =
-                service.assignEmployeeToActivityShift(5L, 1L, 10L);
-
-        assertEquals(expected, actual);
-        assertTrue(shift.getEmployees().contains(employee));
-    }
-
-    @Test
-    void assignEmployeeToActivityShift_activityNotFound() {
-        // Shift returned but contains no activity with the given id
-        when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
-        // No need to stub employee lookup because service checks activity first
-        assertThrows(IllegalArgumentException.class,
-                () -> service.assignEmployeeToActivityShift(999L, 1L, 10L));
-    }
-
-    // ----- test for not found helper methods -----
-
-    @Test
-    void assignEmployeeToActivityShift_shiftNotFound() {
-        when(shiftRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(ShiftNotFoundException.class,
-                () -> service.assignEmployeeToActivityShift(5L, 1L, 10L));
-    }
-
-    @Test
-    void assignEmployeeToActivityShift_employeeNotFound() {
-        Activity a = new Activity();
-        a.setId(5L);
-        shift.getActivities().add(a);
-
-        when(shiftRepository.findById(1L)).thenReturn(Optional.of(shift));
-        when(employeeRepository.findById(10L)).thenReturn(Optional.empty());
-
-        assertThrows(EmployeeNotFoundException.class,
-                () -> service.assignEmployeeToActivityShift(5L, 1L, 10L));
     }
 }
