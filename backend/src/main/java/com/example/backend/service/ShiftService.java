@@ -10,6 +10,4 @@ public interface ShiftService {
     ShiftDTO.ShiftDto getShiftById(Long shiftId);
     ShiftAssignmentDTO.ShiftAssignmentDto assignEmployeeToShift(Long shiftId, Long employeeId);
     void unassignEmployeeFromShift (Long shiftId, Long employeeId);
-    ShiftAssignmentDTO.ShiftAssignmentDto assignEmployeeToActivityShift (Long activityId, Long shiftId, Long employeeId);
-
 }
