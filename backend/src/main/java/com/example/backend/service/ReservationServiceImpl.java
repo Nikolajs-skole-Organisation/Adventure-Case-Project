@@ -50,8 +50,8 @@ public class ReservationServiceImpl implements ReservationService{
     }
 
     @Override
-    public void updateReservation(Long reservationId, Reservation updatedReservation) {
-
+    public ReservationDTO.ReservationResponse updateReservation(String bookingCode, ReservationDTO.CreateReservationRequest updatedReservation) {
+        Reservation reservationToBeUpdated = reservationRepository.findBy(bookingCode);
     }
 
     @Override
