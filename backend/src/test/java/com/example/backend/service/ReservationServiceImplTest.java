@@ -2,6 +2,8 @@ package com.example.backend.service;
 
 import com.example.backend.dto.ReservationDTO;
 import com.example.backend.dto.ReservationMapper;
+import com.example.backend.exception.reservationExceptions.ReservationDateAlreadyPassedException;
+import com.example.backend.exception.reservationExceptions.ReservationNotFoundException;
 import com.example.backend.model.BookingCodeGenerator;
 import com.example.backend.model.Reservation;
 import com.example.backend.model.ReservationSpecification;
@@ -52,7 +54,8 @@ class ReservationServiceImplTest {
                 4,
                 "Nikolaj Albrektsen",
                 "22712123",
-                "nikolaja12@hotmail.com"
+                "nikolaja12@hotmail.com",
+                false
         );
 
         when(codeGen.generate()).thenReturn("RSV-TEST123");
@@ -73,6 +76,7 @@ class ReservationServiceImplTest {
         assertEquals("22712123", saved.contactPhone());
         assertEquals("nikolaja12@hotmail.com", saved.contactEmail());
         assertEquals("RSV-TEST123", saved.bookingCode());
+        assertFalse(saved.confirmed());
     }
 
     @Test
@@ -199,5 +203,78 @@ class ReservationServiceImplTest {
         ArgumentCaptor<Specification<Reservation>> specificationArgumentCaptor = ArgumentCaptor.forClass(Specification.class);
         verify(reservationRepository, times(1)).findAll(specificationArgumentCaptor.capture(), eq(pageable));
         assertThat(specificationArgumentCaptor.getValue()).isNotNull();
+    }
+
+    @Test
+    void updateReservation_throws_reservationNotFoundException(){
+        String bookingCodeToFind = "NOTFOUND";
+
+        Reservation r1 = new Reservation();
+        r1.setId(1L);
+        r1.setContactName("John Doe");
+        r1.setStartTime(LocalDateTime.parse("2025-10-10T10:00:00"));
+        r1.setEndTime(LocalDateTime.parse("2025-10-10T11:00:00"));
+        r1.setParticipants(2);
+        r1.setContactPhone("12345678");
+        r1.setContactEmail("john@example.com");
+        r1.setBookingCode("RSV-TEST123");
+
+        ReservationDTO.CreateReservationRequest request = new ReservationDTO.CreateReservationRequest(
+                r1.getStartTime(),
+                r1.getEndTime(),
+                r1.getParticipants(),
+                r1.getContactName(),
+                r1.getContactPhone(),
+                r1.getContactEmail(),
+                r1.isConfirmed()
+        );
+
+        when(reservationRepository.findByBookingCode(bookingCodeToFind)).thenReturn(Optional.empty());
+
+        ReservationNotFoundException exception = assertThrows(
+                ReservationNotFoundException.class,
+                () -> reservationService.updateReservation(bookingCodeToFind, request)
+        );
+
+        assertEquals("Reservation not found with booking code: " + bookingCodeToFind, exception.getMessage());
+    }
+
+    @Test
+    void updateReservation_throws_reservationDateAlreadyPassedException(){
+        String bookingCodeToFind = "RSV-TEST123";
+
+        Reservation r1 = new Reservation();
+        r1.setId(1L);
+        r1.setContactName("John Doe");
+        r1.setStartTime(LocalDateTime.parse("2025-08-08T08:00:00"));
+        r1.setEndTime(LocalDateTime.parse("2025-08-08T11:00:00"));
+        r1.setParticipants(2);
+        r1.setContactPhone("12345678");
+        r1.setContactEmail("john@example.com");
+        r1.setBookingCode("RSV-TEST123");
+
+        ReservationDTO.CreateReservationRequest request = new ReservationDTO.CreateReservationRequest(
+                r1.getStartTime(),
+                r1.getEndTime(),
+                r1.getParticipants(),
+                r1.getContactName(),
+                r1.getContactPhone(),
+                r1.getContactEmail(),
+                r1.isConfirmed()
+        );
+
+        when(reservationRepository.findByBookingCode(bookingCodeToFind)).thenReturn(Optional.of(r1));
+
+        ReservationDateAlreadyPassedException exception = assertThrows(
+                ReservationDateAlreadyPassedException.class,
+                () -> reservationService.updateReservation(bookingCodeToFind, request)
+        );
+
+        assertEquals("Cannot edit a reservation past the reservation start time", exception.getMessage());
+    }
+
+    @Test
+    void updateReservation_updatesReservationCorrectly(){
+
     }
 }
