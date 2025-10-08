@@ -10,10 +10,7 @@ import com.example.backend.model.ReservationSpecification;
 import com.example.backend.repository.ReservationRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
@@ -45,6 +42,9 @@ class ReservationServiceImplTest {
 
     @InjectMocks
     private ReservationServiceImpl reservationService;
+
+    @Captor
+    ArgumentCaptor<Reservation> reservationCaptor;
 
     @Test
     void createReservation_mapsAndGeneratesCode() {
@@ -275,6 +275,61 @@ class ReservationServiceImplTest {
 
     @Test
     void updateReservation_updatesReservationCorrectly(){
+        String bookingCodeToFind = "RSV-TEST123";
 
+        Reservation r1 = new Reservation();
+        r1.setId(1L);
+        r1.setContactName("Old Name");
+        r1.setStartTime((LocalDateTime.now().plusHours(2)));
+        r1.setEndTime((LocalDateTime.now().plusHours(3)));
+        r1.setParticipants(2);
+        r1.setContactPhone("000");
+        r1.setContactEmail("old@example.com");
+        r1.setBookingCode(bookingCodeToFind);
+        r1.setConfirmed(false);
+
+        when(reservationRepository.findByBookingCode(bookingCodeToFind)).thenReturn(Optional.of(r1));
+
+        ReservationDTO.CreateReservationRequest updateReq = new ReservationDTO.CreateReservationRequest(
+                LocalDateTime.now().plusHours(4),
+                LocalDateTime.now().plusHours(5),
+                5,
+                "New Name",
+                "11223344",
+                "new@example.com",
+                true
+        );
+
+        ReservationDTO.ReservationResponse mapped = new ReservationDTO.ReservationResponse(
+                updateReq.startTime(),
+                updateReq.endTime(),
+                updateReq.participants(),
+                updateReq.contactName(),
+                updateReq.contactPhone(),
+                updateReq.contactEmail(),
+                bookingCodeToFind,
+                updateReq.isConfirmed()
+        );
+
+        when(reservationMapper.toResponse(any(Reservation.class))).thenReturn(mapped);
+
+        when(reservationRepository.save(any(Reservation.class))).thenAnswer(inv -> inv.getArgument(0, Reservation.class));
+
+        ReservationDTO.ReservationResponse result = reservationService.updateReservation(bookingCodeToFind, updateReq);
+
+        verify(reservationRepository).findByBookingCode(bookingCodeToFind);
+        verify(reservationRepository).save(reservationCaptor.capture());
+        verify(reservationMapper).toResponse(any(Reservation.class));
+
+        Reservation saved = reservationCaptor.getValue();
+        assertThat(saved.getContactName()).isEqualTo(updateReq.contactName());
+        assertThat(saved.getContactPhone()).isEqualTo(updateReq.contactPhone());
+        assertThat(saved.getContactEmail()).isEqualTo(updateReq.contactEmail());
+        assertThat(saved.isConfirmed()).isEqualTo(updateReq.isConfirmed());
+        assertThat(saved.getStartTime()).isEqualTo(updateReq.startTime());
+        assertThat(saved.getEndTime()).isEqualTo(updateReq.endTime());
+        assertThat(saved.getParticipants()).isEqualTo(updateReq.participants());
+
+        assertThat(result).isEqualTo(mapped);
     }
 }
