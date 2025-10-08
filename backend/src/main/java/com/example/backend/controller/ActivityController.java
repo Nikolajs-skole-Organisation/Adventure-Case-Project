@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = {"http://127.0.0.1:5500", "htpp://localhost:5500"})
 @RequestMapping("/api/activities")
 public class ActivityController {
 
@@ -33,6 +34,12 @@ public class ActivityController {
         return ResponseEntity.ok(activityService.getActivityById(id));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ActivityDTO.activityDto> updateActivity(@PathVariable Long id,
+                                                                  @RequestBody ActivityDTO.activityDto activityDto) {
+        return ResponseEntity.ok(activityService.updateActivity(id, activityDto));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteActivity(@PathVariable Long id) {
         activityService.deleteActivity(id);
@@ -40,3 +47,5 @@ public class ActivityController {
     }
 
 }
+
+

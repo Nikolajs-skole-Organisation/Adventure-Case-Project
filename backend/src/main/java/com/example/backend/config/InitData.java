@@ -49,6 +49,7 @@ public class InitData implements CommandLineRunner {
         laserTag.setMinHeight(130);
         laserTag.setMaxParticipant(12);
 
+
         // --- Shifts ---
         Shift morning = new Shift();
         morning.setStartTime(LocalDate.now().atTime(9, 0));
