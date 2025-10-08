@@ -23,9 +23,9 @@ public class InitData implements CommandLineRunner {
     public void run(String... args) {
 
         // ----- Employees -----
-        Employee alice   = new Employee(null, "Alice Anders", "alice@gokart.com", "12345678", "Employee");
-        Employee bob     = new Employee(null, "Bob Berg", "bob@gokart.com", "87654321", "Employee");
-        Employee charlie = new Employee(null, "Charlie Christensen", "charlie@paintball.com", "11112222", "Employee");
+        Employee alice   = new Employee(null, "Alice Anders", "alice@gokart.com", "12345678", "Employee", "velkommen123");
+        Employee bob     = new Employee(null, "Bob Berg", "bob@gokart.com", "87654321", "Employee", "velkommen123");
+        Employee charlie = new Employee(null, "Charlie Christensen", "charlie@paintball.com", "11112222", "Employee", "velkommen123");
 
         // ----- Activities -----
         Activity goKart = new Activity();
