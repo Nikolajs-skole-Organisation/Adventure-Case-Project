@@ -33,6 +33,12 @@ public class ActivityController {
         return ResponseEntity.ok(activityService.getActivityById(id));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ActivityDTO.activityDto> updateActivity(@PathVariable Long id,
+                                                                  @RequestBody ActivityDTO.activityDto activityDto) {
+        return ResponseEntity.ok(activityService.updateActivity(id, activityDto));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteActivity(@PathVariable Long id) {
         activityService.deleteActivity(id);
@@ -40,3 +46,5 @@ public class ActivityController {
     }
 
 }
+
+

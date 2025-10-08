@@ -50,6 +50,23 @@ public class ActivityServiceImpl implements ActivityService {
         }
     }
 
+    @Override public ActivityDTO.activityDto updateActivity(Long id, ActivityDTO.activityDto activityDto) {
+        Optional<Activity> activity = activityRepository.findById(id);
+        if (activity.isPresent()) {
+            Activity existing = activity.get();
+            existing.setName(activityDto.name());
+            existing.setDescription(activityDto.description());
+            existing.setMinAge(activityDto.minAge());
+            existing.setMinHeight(activityDto.minHeight());
+            existing.setMaxParticipant(activityDto.maxParticipants());
+
+            Activity saved = activityRepository.save(existing);
+            return activityMapper.toDto(saved);
+        } else {
+            throw new NotFoundException("Activity not found with id: " + id);
+        }
+    }
+
 
     @Override
     public void deleteActivity(Long id) {
