@@ -1,7 +1,13 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.ReservationDTO;
+import com.example.backend.dto.ReservationPageResponse;
+import com.example.backend.model.Reservation;
 import com.example.backend.service.ReservationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -50,5 +56,23 @@ public class ReservationController {
     public ResponseEntity<Void> confirm(@PathVariable String bookingCode) {
         reservationService.confirmByBookingCode(bookingCode);
         return ResponseEntity.noContent().build();
+    }
+
+    // The method searches for the given query. If no result can be found it will return the first 20 objects
+    // and list them by startTime in descending order, so the next reservation is first.
+    // if more than one result it will list them by startTime in descending order also.
+    @GetMapping("/search")
+    public ResponseEntity<ReservationPageResponse> search(
+            @RequestParam(name = "query") String query,
+            @PageableDefault(size = 20, sort = "startTime", direction = Sort.Direction.ASC)Pageable pageable) {
+
+        Page<Reservation> page = reservationService.search(query, pageable);
+        var body = new ReservationPageResponse(
+                page.getContent(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements()
+        );
+        return ResponseEntity.ok(body);
     }
 }
