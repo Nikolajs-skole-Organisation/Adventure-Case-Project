@@ -7,3 +7,7 @@ export async function getWeeklyShiftOverview(weekStartDate) {
   const iso = weekStartDate.toISOString().slice(0, 10);
   return get(`${SHIFTS_URL}/overview?weekStart=${iso}`);
 }
+
+export async function getShiftDetail(shiftId) {
+  return get(`${SHIFTS_URL}/${encodeURIComponent(shiftId)}`);
+}
