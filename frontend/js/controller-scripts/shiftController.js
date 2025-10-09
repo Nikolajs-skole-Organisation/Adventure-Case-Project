@@ -16,7 +16,7 @@ window.addEventListener("DOMContentLoaded", initShiftController);
 // ----- Entry Point -----
 async function initShiftController() {
   dom = mapDomElements();
-  window.history.replaceState({}, "", "/shifts");
+  //window.history.replaceState({}, "", "/shifts");
   setupEventListeners();
   await reloadAndRender();
 }
@@ -34,6 +34,7 @@ function setupEventListeners() {
   dom.prevBtn.addEventListener("click", () => handleWeekChange(-1));
   dom.nextBtn.addEventListener("click", () => handleWeekChange(1));
   dom.todayBtn.addEventListener("click", handleTodayClick);
+  dom.gridColumns.addEventListener("click", handleShiftClick);
 }
 
 // ----- Event Handlers -----
@@ -45,6 +46,13 @@ function handleWeekChange(offset) {
 function handleTodayClick() {
   currentWeekStart = startOfCurrentWeek();
   reloadAndRender();
+}
+
+function handleShiftClick(event){
+  const card = event.target.closest(".shift-card");
+  if(!card) return;
+
+  navigateToShiftDetail(card.dataset.id);
 }
 
 // ----- Rendering -----
@@ -106,6 +114,11 @@ function renderShiftCard(shift) {
       <p class="shift-employees">${employees || "No employees"}</p>
     </article>
   `;
+}
+
+function navigateToShiftDetail(shiftId) {
+  const params = new URLSearchParams({ id: shiftId });
+  window.location.assign(`/webpages/shift-detail.html?${params}`);
 }
 
 function getShiftLabel(shift) {
