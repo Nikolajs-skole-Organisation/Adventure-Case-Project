@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Shift Details</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <script
+      type="module"
+      src="../js/controller-scripts/shiftDetailController.js"
+    ></script>
+  </head>
+  <body class="shift-detail">
+    <main id="shiftDetail">
+      <header>
+        <h1 id="shiftTitle">Loading shift…</h1>
+        <p id="shiftTime"></p>
+        <p id="shiftStatus"></p>
+      </header>
+
+      <section>
+        <h2>Assigned Employees</h2>
+        <ul id="shiftEmployees"></ul>
+      </section>
+
+      <button type="button" id="backToScheduleBtn">Back to schedule</button>
+      <p id="errorMessage" hidden></p>
+    </main>
+  </body>
+</html>
