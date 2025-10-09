@@ -9,5 +9,5 @@ export async function getWeeklyShiftOverview(weekStartDate) {
 }
 
 export async function getShiftDetail(shiftId) {
-  return get(`${SHIFTS_URL}/${encodeURIComponent(shiftId)}`);
+  return get(`${SHIFTS_URL}/${(shiftId)}`);
 }
