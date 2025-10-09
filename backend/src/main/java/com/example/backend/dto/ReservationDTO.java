@@ -10,7 +10,8 @@ public class ReservationDTO {
             int participants,
             String contactName,
             String contactPhone,
-            String contactEmail
+            String contactEmail,
+            Boolean isConfirmed
     ) {
     }
 
