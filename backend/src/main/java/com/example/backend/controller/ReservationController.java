@@ -59,12 +59,12 @@ public class ReservationController {
     }
 
     // The method searches for the given query. If no result can be found it will return the first 20 objects
-    // and list them by startTime in descending order, so the next reservation is first.
-    // if more than one result it will list them by startTime in descending order also.
+    // and list them by startTime in ascending order, so the next reservation is first.
+    // if more than one result it will list them by startTime in ascending order also.
     @GetMapping("/search")
     public ResponseEntity<ReservationPageResponse> search(
             @RequestParam(name = "query") String query,
-            @PageableDefault(size = 20, sort = "startTime", direction = Sort.Direction.ASC)Pageable pageable) {
+            @PageableDefault(size = 20, sort = "startTime", direction = Sort.Direction.ASC) Pageable pageable) {
 
         Page<Reservation> page = reservationService.search(query, pageable);
         var body = new ReservationPageResponse(
@@ -74,5 +74,15 @@ public class ReservationController {
                 page.getTotalElements()
         );
         return ResponseEntity.ok(body);
+    }
+
+    @PutMapping("/{bookingCode}")
+    public ResponseEntity<ReservationDTO.ReservationResponse> updateReservation(@PathVariable String bookingCode,
+                                                                                @RequestBody ReservationDTO.CreateReservationRequest updatedReservation) {
+        try {
+            return ResponseEntity.ok(reservationService.updateReservation(bookingCode, updatedReservation));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 }
