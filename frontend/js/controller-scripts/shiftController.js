@@ -16,6 +16,7 @@ window.addEventListener("DOMContentLoaded", initShiftController);
 // ----- Entry Point -----
 async function initShiftController() {
   dom = mapDomElements();
+  window.history.replaceState({}, "", "/shifts");
   setupEventListeners();
   await reloadAndRender();
 }
