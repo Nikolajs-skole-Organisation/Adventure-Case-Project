@@ -56,6 +56,7 @@ public class ActivityServiceImpl implements ActivityService {
             Activity existing = activity.get();
             existing.setName(activityDto.name());
             existing.setDescription(activityDto.description());
+            existing.setPrice(activityDto.price());
             existing.setMinAge(activityDto.minAge());
             existing.setMinHeight(activityDto.minHeight());
             existing.setMaxParticipant(activityDto.maxParticipants());

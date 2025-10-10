@@ -31,6 +31,7 @@ public class InitData implements CommandLineRunner {
         Activity goKart = new Activity();
         goKart.setName("GoKart");
         goKart.setDescription("Outdoor GoKart racing track");
+        goKart.setPrice(599);
         goKart.setMinAge(12);
         goKart.setMinHeight(140);
         goKart.setMaxParticipant(8);
@@ -38,6 +39,7 @@ public class InitData implements CommandLineRunner {
         Activity paintball = new Activity();
         paintball.setName("Paintball");
         paintball.setDescription("Team-based paintball experience");
+        paintball.setPrice(499);
         paintball.setMinAge(16);
         paintball.setMinHeight(150);
         paintball.setMaxParticipant(10);
@@ -45,6 +47,7 @@ public class InitData implements CommandLineRunner {
         Activity laserTag = new Activity();
         laserTag.setName("LaserTag");
         laserTag.setDescription("Indoor laser tag arena");
+        laserTag.setPrice(249);
         laserTag.setMinAge(10);
         laserTag.setMinHeight(130);
         laserTag.setMaxParticipant(12);
