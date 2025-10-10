@@ -18,6 +18,7 @@ public class Activity {
     private Long id;
     private String name;
     private String description;
+    private double price;
     private int minAge;
     private int minHeight;
     private int maxParticipant;
@@ -25,10 +26,11 @@ public class Activity {
     @ManyToMany(mappedBy = "activities")
     private Set<Shift> shifts = new HashSet<>();
 
-    public Activity(Long id, String name, String description, int minAge, int minHeight, int maxParticipant) {
+    public Activity(Long id, String name, String description, double price, int minAge, int minHeight, int maxParticipant) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.price = price;
         this.minAge = minAge;
         this.minHeight = minHeight;
         this.maxParticipant = maxParticipant;
@@ -58,6 +60,14 @@ public class Activity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public int getMinAge() {

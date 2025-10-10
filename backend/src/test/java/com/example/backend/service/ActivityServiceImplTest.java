@@ -46,6 +46,7 @@ public class ActivityServiceImplTest {
                 1L,
                 "GoKart",
                 "Outdoor GoKart racing track",
+                599,
                 12,
                 140,
                 8);
@@ -55,6 +56,7 @@ public class ActivityServiceImplTest {
                 2L,
                 "Bowling",
                 "Fun game",
+                199,
                 8,
                 120,
                 6
@@ -64,6 +66,7 @@ public class ActivityServiceImplTest {
                 1L,
                 "GoKart",
                 "Outdoor GoKart racing track",
+                599,
                 12,
                 140,
                 8);
@@ -72,6 +75,7 @@ public class ActivityServiceImplTest {
                 2L,
                 "Bowling",
                 "Fun game",
+                199,
                 8,
                 120,
                 6
@@ -201,6 +205,74 @@ public class ActivityServiceImplTest {
         assertEquals("Activity not found with id: 999", exception.getMessage());
         verify(activityRepository, times(1)).existsById(activityId);
         verify(activityRepository, never()).deleteById(anyLong());
+    }
+
+
+    // Tests that updateActivity() updates an existing activity correctly
+    @Test
+    void updateActivity_WhenExists_ShouldUpdateAndReturnDto() {
+        // Arrange
+        Long activityId = 1L;
+
+        ActivityDTO.activityDto updatedDto = new ActivityDTO.activityDto(
+                activityId,
+                "Updated GoKart",
+                "Indoor GoKart racing track",
+                699,
+                14,
+                150,
+                10
+        );
+
+        // Mock existing entity in the database
+        when(activityRepository.findById(activityId)).thenReturn(Optional.of(activity));
+        // Mock saving and mapping
+        when(activityRepository.save(any(Activity.class))).thenReturn(activity);
+        when(activityMapper.toDto(any(Activity.class))).thenReturn(updatedDto);
+
+        // Act
+        ActivityDTO.activityDto result = activityServiceImpl.updateActivity(activityId, updatedDto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(activityId, result.id());
+        assertEquals("Updated GoKart", result.name());
+        assertEquals("Indoor GoKart racing track", result.description());
+        assertEquals(699, result.price());
+        assertEquals(14, result.minAge());
+        assertEquals(150, result.minHeight());
+        assertEquals(10, result.maxParticipants());
+
+        verify(activityRepository, times(1)).findById(activityId);
+        verify(activityRepository, times(1)).save(any(Activity.class));
+        verify(activityMapper, times(1)).toDto(any(Activity.class));
+    }
+
+
+    // Tests that updateActivity() throws NotFoundException when the activity doesn't exist
+    @Test
+    void updateActivity_WhenNotFound_ShouldThrowException() {
+        // Arrange
+        Long nonExistingId = 999L;
+        ActivityDTO.activityDto updatedDto = new ActivityDTO.activityDto(
+                nonExistingId,
+                "Nonexistent",
+                "Does not exist",
+                100,
+                10,
+                100,
+                5
+        );
+
+        when(activityRepository.findById(nonExistingId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        NotFoundException exception = assertThrows(NotFoundException.class,
+                () -> activityServiceImpl.updateActivity(nonExistingId, updatedDto));
+
+        assertEquals("Activity not found with id: " + nonExistingId, exception.getMessage());
+        verify(activityRepository, times(1)).findById(nonExistingId);
+        verify(activityRepository, never()).save(any());
     }
 
 }

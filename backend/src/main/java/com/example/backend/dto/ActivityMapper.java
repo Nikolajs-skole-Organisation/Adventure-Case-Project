@@ -12,6 +12,7 @@ public class ActivityMapper {
                 activity.getId(),
                 activity.getName(),
                 activity.getDescription(),
+                activity.getPrice(),
                 activity.getMinAge(),
                 activity.getMinHeight(),
                 activity.getMaxParticipant());
@@ -23,6 +24,7 @@ public class ActivityMapper {
         a.setId(dto.id());
         a.setName(dto.name());
         a.setDescription(dto.description());
+        a.setPrice(dto.price());
         a.setMinAge(dto.minAge());
         a.setMinHeight(dto.minHeight());
         a.setMaxParticipant(dto.maxParticipants());
