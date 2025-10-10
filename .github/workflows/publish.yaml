@@ -13,7 +13,7 @@ env:
 
 jobs:
   java-test:
-    uses: java-test-reusable.yaml
+    uses: ./.github/workflows/java-test-reusable.yaml
 
   build-and-push:
     needs: java-test
