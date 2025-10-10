@@ -96,6 +96,53 @@ class ShiftServiceImplTest {
         assertThrows(ShiftNotFoundException.class, () -> service.getShiftById(99L));
     }
 
+    // ----- getShiftsBetween -----
+
+    @Test
+    void getShiftsBetween_successful() {
+        LocalDateTime start = LocalDateTime.of(2025, 10, 15, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2025, 10, 15, 12, 0);
+
+        Shift shift1 = new Shift();
+        shift1.setId(1L);
+        shift1.setStartTime(LocalDateTime.of(2025, 10, 15, 9, 0));
+        shift1.setEndTime(LocalDateTime.of(2025, 10, 15, 10, 0));
+        shift1.setEmployees(new HashSet<>());
+
+        Shift shift2 = new Shift();
+        shift2.setId(2L);
+        shift2.setStartTime(LocalDateTime.of(2025, 10, 15, 13, 0));
+        shift2.setEndTime(LocalDateTime.of(2025, 10, 15, 14, 0));
+        shift2.setEmployees(new HashSet<>());
+
+        when(shiftRepository.findAll()).thenReturn(List.of(shift1, shift2));
+
+        ShiftDTO.ShiftDto dto1 = new ShiftDTO.ShiftDto(1L, "start1", "end1", null, false);
+        when(shiftMapper.toDto(shift1)).thenReturn(dto1);
+
+        List<ShiftDTO.ShiftDto> result = service.getShiftsBetween(start, end);
+
+        assertEquals(1, result.size());
+        assertEquals(1L, result.getFirst().id());
+    }
+
+    @Test
+    void getShiftsBetween_noMatches() {
+        LocalDateTime start = LocalDateTime.of(2025, 10, 16, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2025, 10, 16, 12, 0);
+
+        Shift shift = new Shift();
+        shift.setId(1L);
+        shift.setStartTime(LocalDateTime.of(2025, 10, 15, 8, 0));
+        shift.setEndTime(LocalDateTime.of(2025, 10, 15, 9, 0));
+
+        when(shiftRepository.findAll()).thenReturn(List.of(shift));
+
+        List<ShiftDTO.ShiftDto> result = service.getShiftsBetween(start, end);
+
+        assertTrue(result.isEmpty());
+    }
+
     // ----- assignEmployeeToShift -----
 
     @Test
