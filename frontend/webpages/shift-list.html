@@ -4,32 +4,37 @@
     <meta charset="UTF-8" />
     <title>Shift Overview</title>
     <link rel="stylesheet" href="../css/main.css" />
-    <script
-      type="module"
-      src="../js/controller-scripts/shiftController.js"
-    ></script>
   </head>
-  <body class="shift-week">
-    <main class="week-board">
-      <header class="week-toolbar">
-        <h1>Shift Overview</h1>
-        <div class="week-toolbarControls">
-          <button type="button" id="prevWeekBtn" aria-label="Previous week">
-            ‹
-          </button>
-          <span id="weekRangeLabel">Loading…</span>
-          <button type="button" id="nextWeekBtn" aria-label="Next week">
-            ›
-          </button>
-          <button type="button" id="todayBtn">Today</button>
-        </div>
-      </header>
+  <body class="layout">
+    <div id="sidebarHost"></div>
+    <main class="layout__content shift-week">
+      <div class="week-board">
+        <header class="week-toolbar">
+          <h1>Shift Overview</h1>
+          <div class="week-toolbarControls">
+            <button type="button" id="prevWeekBtn" aria-label="Previous week">
+              ‹
+            </button>
+            <span id="weekRangeLabel">Loading…</span>
+            <button type="button" id="nextWeekBtn" aria-label="Next week">
+              ›
+            </button>
+            <button type="button" id="todayBtn">Today</button>
+          </div>
+        </header>
 
-      <section class="week-grid">
-        <header class="week-gridHeader" id="weekGridHeader"></header>
+        <section class="week-grid">
+          <header class="week-gridHeader" id="weekGridHeader"></header>
 
-        <div class="week-gridColumns" id="weekGridColumns"></div>
-      </section>
+          <div class="week-gridColumns" id="weekGridColumns"></div>
+        </section>
+      </div>
     </main>
+
+    <script type="module">
+      import { mountSidebar } from "../js/sidebar.js";
+      mountSidebar("sidebarHost", "shift-list");
+    </script>
+    <script type="module" src="../js/controller-scripts/shiftController.js"></script>
   </body>
 </html>

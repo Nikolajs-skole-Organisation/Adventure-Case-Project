@@ -5,8 +5,59 @@ body {
   margin: 0;
 }
 
-.shift-week {
+.layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
   min-height: 100vh;
+}
+
+.app-sidebar {
+  height: 100%;
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 28px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.app-sidebar__logo {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: inherit;
+}
+
+.app-sidebar__nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.app-sidebar__nav a {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: #cbd5f5;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.app-sidebar__nav a:hover {
+  background: rgba(148, 163, 184, 0.2);
+  color: #fff;
+}
+
+.app-sidebar__nav a.is-active {
+  background: rgba(37, 99, 235, 0.3);
+  color: #fff;
+}
+
+.shift-week {
   padding: 2rem;
   display: flex;
   justify-content: center;
@@ -208,9 +259,8 @@ body {
   text-transform: uppercase;
 }
 
-.shift-detail {
+.shift-detail-screen {
   min-height: 100vh;
-  margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -218,7 +268,7 @@ body {
   padding: 2rem;
 }
 
-#shiftDetail {
+.shift-detail {
   width: min(520px, 100%);
   background: #ffffff;
   border-radius: 16px;
@@ -229,11 +279,11 @@ body {
   gap: 20px;
 }
 
-#shiftDetail header h1 {
+.shift-detail header h1 {
   margin: 0 0 8px;
 }
 
-#shiftDetail header p {
+.shift-detail header p {
   margin: 0;
   color: #475569;
 }
@@ -333,4 +383,59 @@ body {
   color: #fff;
   font-weight: 600;
   cursor: pointer;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.app-sidebar {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.app-sidebar__logo {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.app-sidebar__nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.app-sidebar__nav a {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: #cbd5f5;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.app-sidebar__nav a:hover {
+  background: rgba(148, 163, 184, 0.2);
+  color: #fff;
+}
+
+.app-sidebar__nav a.is-active {
+  background: rgba(37, 99, 235, 0.3);
+  color: #fff;
+}
+
+.layout__content {
+  padding: 2rem;
+  background: #f5f7fa;
 }
