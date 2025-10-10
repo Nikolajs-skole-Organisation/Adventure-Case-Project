@@ -272,3 +272,65 @@ body {
   font-weight: 600;
 }
 
+.shift-detail__section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.shift-detail__assign {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+#employeeSelect {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  font: inherit;
+}
+
+#assignEmployeeBtn {
+  padding: 9px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.shift-detail__error {
+  margin: 0;
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.shift-employee {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.shift-employee__name {
+  margin: 0;
+  font-weight: 600;
+  color: #1f2933;
+}
+
+.shift-employee__remove {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
