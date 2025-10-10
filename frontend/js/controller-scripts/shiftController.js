@@ -48,9 +48,9 @@ function handleTodayClick() {
   reloadAndRender();
 }
 
-function handleShiftClick(event){
+function handleShiftClick(event) {
   const card = event.target.closest(".shift-card");
-  if(!card) return;
+  if (!card) return;
 
   navigateToShiftDetail(card.dataset.id);
 }
