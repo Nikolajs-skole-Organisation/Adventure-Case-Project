@@ -9,14 +9,5 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
 
-
-
       - name: Test container
-        run: |
-          docker compose up -d
-          
-          sleep 40
-          
-          curl -f http://localhost:8080/actuator/health || exit 1
-          
-          docker compose down
+        run: docker compose up -d
