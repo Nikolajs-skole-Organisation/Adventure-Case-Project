@@ -15,8 +15,10 @@ services:
       - db_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 20s
-      retries: 5
+      interval: 5s
+      timeout: 3s
+      retries: 60
+      start_period: 40s
     restart: unless-stopped
     networks:
       - spring-mysql
