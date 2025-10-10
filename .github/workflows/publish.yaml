@@ -2,6 +2,8 @@ name: Push to GCHR
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
 
 
