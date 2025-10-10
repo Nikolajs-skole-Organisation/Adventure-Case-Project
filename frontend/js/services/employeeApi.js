@@ -6,3 +6,7 @@ const EMPLOYEES_URL = `${BASE_URL}/employees`;
 export async function getAllEmployees() {
   return get(EMPLOYEES_URL);
 }
+
+export async function getEmployeeById(id) {
+  return get(`${EMPLOYEES_URL}/${id}`);
+}
