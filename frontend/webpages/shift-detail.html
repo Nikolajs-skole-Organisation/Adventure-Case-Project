@@ -17,9 +17,23 @@
         <p id="shiftStatus"></p>
       </header>
 
-      <section>
+      <section class="shift-detail__section">
         <h2>Assigned Employees</h2>
         <ul id="shiftEmployees"></ul>
+      </section>
+
+      <section class="shift-detail__section">
+        <h2>Assign Employee</h2>
+        <form id="assignEmployeeForm">
+          <label for="employeeSelect">Select employee</label>
+          <div class="shift-detail__assign">
+            <select id="employeeSelect">
+              <option value="" disabled selected>Choose an employee</option>
+            </select>
+            <button type="submit" id="assignEmployeeBtn">Assign</button>
+          </div>
+          <p id="assignError" hidden class="shift-detail__error"></p>
+        </form>
       </section>
 
       <button type="button" id="backToScheduleBtn">Back to schedule</button>
