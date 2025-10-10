@@ -16,7 +16,7 @@ jobs:
           MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
           MYSQL_USER=${{ secrets.MYSQL_USER }}
           MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
-          SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}
+          SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/${{ secrets.MYSQL_DATABASE }}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
           SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
           SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
           SPRING_JPA_HIBERNATE_DDL_AUTO=${{ secrets.SPRING_JPA_HIBERNATE_DDL_AUTO }}
@@ -25,3 +25,12 @@ jobs:
 
       - name: Test container
         run: docker compose up -d
+
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          docker ps -a
+          echo "---- DB LOGS ----"
+          docker logs the_db || true
+          echo "---- APP LOGS ----"
+          docker logs adventure-case-project-app-1 || true
