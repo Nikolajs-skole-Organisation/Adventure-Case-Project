@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Login</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <script type="module" src="../js/controller-scripts/loginController.js"></script>
+</head>
+
+<body class="login-page">
+    <main class="login-card">
+        <h1>Sign in</h1>
+        <form id="loginForm" method="post" autocomplete="on">
+            <label for="username">Email</label>
+            <input id="username" name="email" required autofocus />
+
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" required />
+
+            <button type="submit">Log in</button>
+            <p id="loginError" hidden class="shift-detail__error"></p>
+        </form>
+    </main>
+</body>
+
+</html>
