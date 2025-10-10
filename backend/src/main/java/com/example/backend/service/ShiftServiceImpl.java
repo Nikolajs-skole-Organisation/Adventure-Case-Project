@@ -14,6 +14,7 @@ import com.example.backend.repository.EmployeeRepository;
 import com.example.backend.repository.ShiftRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +57,33 @@ public class ShiftServiceImpl implements ShiftService {
                 .orElseThrow(() -> new ShiftNotFoundException("Shift not found with id: " + shiftId));
 
         return shiftMapper.toDto(shift);
+    }
+
+    @Override
+    public List<ShiftDTO.ShiftDto> getShiftsBetween(LocalDateTime start, LocalDateTime end) {
+        List<Shift> allShifts = shiftRepository.findAll();
+        List<ShiftDTO.ShiftDto> result = new ArrayList<>();
+
+        for (Shift shift : allShifts) {
+            LocalDateTime shiftStart = shift.getStartTime();
+
+            if ((shiftStart.isEqual(start) || shiftStart.isAfter(start))
+                    && shiftStart.isBefore(end)) {
+
+                boolean staffed = isShiftFullyStaffed(shift);
+                ShiftDTO.ShiftDto mapped = shiftMapper.toDto(shift);
+
+                result.add(new ShiftDTO.ShiftDto(
+                        mapped.id(),
+                        mapped.startTime(),
+                        mapped.endTime(),
+                        mapped.employees(),
+                        staffed
+                ));
+            }
+        }
+
+        return result;
     }
 
     @Override
