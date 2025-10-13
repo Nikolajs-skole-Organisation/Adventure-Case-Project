@@ -17,5 +17,5 @@ public interface ReservationService {
     public void cancelReservationByCode(String bookingCode);
     List<ReservationDTO.ReservationResponse> getReservationsForDate(LocalDate date);
     void confirmByBookingCode(String bookingCode);
-    Page<Reservation> search(String query, Pageable pageable);
+    Page<ReservationDTO.ReservationResponse> search(String query, Pageable pageable);
 }
