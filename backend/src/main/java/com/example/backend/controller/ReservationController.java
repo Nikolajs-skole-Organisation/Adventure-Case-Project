@@ -78,7 +78,7 @@ public class ReservationController {
 
     @PutMapping("/{bookingCode}")
     public ResponseEntity<ReservationDTO.ReservationResponse> updateReservation(@PathVariable String bookingCode,
-                                                                                @RequestBody ReservationDTO.CreateReservationRequest updatedReservation) {
+                                                                                @RequestBody ReservationDTO.UpdateReservationRequest updatedReservation) {
         try {
             return ResponseEntity.ok(reservationService.updateReservation(bookingCode, updatedReservation));
         } catch (RuntimeException e) {

@@ -17,6 +17,10 @@ public class Reservation {
     private String contactPhone;
     private String contactEmail;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "activity_id", nullable = false)
+    private Activity activity;
+
     @Column(nullable = false, unique = true, length = 12)
     private String bookingCode;
 
@@ -106,5 +110,13 @@ public class Reservation {
 
     public void setConfirmed(boolean confirmed) {
         this.confirmed = confirmed;
+    }
+
+    public Activity getActivity() {
+        return activity;
+    }
+
+    public void setActivity(Activity activity) {
+        this.activity = activity;
     }
 }

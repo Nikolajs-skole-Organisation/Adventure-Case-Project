@@ -4,9 +4,11 @@ import com.example.backend.dto.ReservationDTO;
 import com.example.backend.dto.ReservationMapper;
 import com.example.backend.exception.reservationExceptions.ReservationDateAlreadyPassedException;
 import com.example.backend.exception.reservationExceptions.ReservationNotFoundException;
+import com.example.backend.model.Activity;
 import com.example.backend.model.BookingCodeGenerator;
 import com.example.backend.model.Reservation;
 import com.example.backend.model.ReservationSpecification;
+import com.example.backend.repository.ActivityRepository;
 import com.example.backend.repository.ReservationRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +39,9 @@ class ReservationServiceImplTest {
     @Mock
     private BookingCodeGenerator codeGen;
 
+    @Mock
+    private ActivityRepository activityRepository;
+
     @Spy
     private ReservationMapper reservationMapper = new ReservationMapper();
 
@@ -48,6 +53,8 @@ class ReservationServiceImplTest {
 
     @Test
     void createReservation_mapsAndGeneratesCode() {
+        Activity a1 = new Activity(1L, "Gokart", "Fun", 300, 10, 100, 6);
+
         ReservationDTO.CreateReservationRequest input = new ReservationDTO.CreateReservationRequest(
                 LocalDateTime.of(2025,10,5,16,30),
                 LocalDateTime.of(2025,10,5,18, 0),
@@ -55,7 +62,7 @@ class ReservationServiceImplTest {
                 "Nikolaj Albrektsen",
                 "22712123",
                 "nikolaja12@hotmail.com",
-                false
+                a1.getId()
         );
 
         when(codeGen.generate()).thenReturn("RSV-TEST123");
@@ -209,6 +216,8 @@ class ReservationServiceImplTest {
     void updateReservation_throws_reservationNotFoundException(){
         String bookingCodeToFind = "NOTFOUND";
 
+        Activity activity = new Activity(1L, "Gokart", "Fun", 300, 10, 100, 6);
+
         Reservation r1 = new Reservation();
         r1.setId(1L);
         r1.setContactName("John Doe");
@@ -218,14 +227,18 @@ class ReservationServiceImplTest {
         r1.setContactPhone("12345678");
         r1.setContactEmail("john@example.com");
         r1.setBookingCode("RSV-TEST123");
+        r1.setActivity(activity);
 
-        ReservationDTO.CreateReservationRequest request = new ReservationDTO.CreateReservationRequest(
+
+
+        ReservationDTO.UpdateReservationRequest request = new ReservationDTO.UpdateReservationRequest(
                 r1.getStartTime(),
                 r1.getEndTime(),
                 r1.getParticipants(),
                 r1.getContactName(),
                 r1.getContactPhone(),
                 r1.getContactEmail(),
+                r1.getActivity().getId(),
                 r1.isConfirmed()
         );
 
@@ -243,6 +256,8 @@ class ReservationServiceImplTest {
     void updateReservation_throws_reservationDateAlreadyPassedException(){
         String bookingCodeToFind = "RSV-TEST123";
 
+        Activity activity = new Activity(1L, "Gokart", "Fun", 300, 10, 100, 6);
+
         Reservation r1 = new Reservation();
         r1.setId(1L);
         r1.setContactName("John Doe");
@@ -252,14 +267,16 @@ class ReservationServiceImplTest {
         r1.setContactPhone("12345678");
         r1.setContactEmail("john@example.com");
         r1.setBookingCode("RSV-TEST123");
+        r1.setActivity(activity);
 
-        ReservationDTO.CreateReservationRequest request = new ReservationDTO.CreateReservationRequest(
+        ReservationDTO.UpdateReservationRequest request = new ReservationDTO.UpdateReservationRequest(
                 r1.getStartTime(),
                 r1.getEndTime(),
                 r1.getParticipants(),
                 r1.getContactName(),
                 r1.getContactPhone(),
                 r1.getContactEmail(),
+                r1.getActivity().getId(),
                 r1.isConfirmed()
         );
 
@@ -274,62 +291,90 @@ class ReservationServiceImplTest {
     }
 
     @Test
-    void updateReservation_updatesReservationCorrectly(){
+    void updateReservation_updatesReservationCorrectly() {
+        // Arrange
+        LocalDateTime now = LocalDateTime.now();
         String bookingCodeToFind = "RSV-TEST123";
 
-        Reservation r1 = new Reservation();
-        r1.setId(1L);
-        r1.setContactName("Old Name");
-        r1.setStartTime((LocalDateTime.now().plusHours(2)));
-        r1.setEndTime((LocalDateTime.now().plusHours(3)));
-        r1.setParticipants(2);
-        r1.setContactPhone("000");
-        r1.setContactEmail("old@example.com");
-        r1.setBookingCode(bookingCodeToFind);
-        r1.setConfirmed(false);
+        Activity a1 = new Activity(1L, "Gokart", "Fun", 300, 10, 100, 6);
+        Activity a2 = new Activity(2L, "Badminton", "NotFun", 200, 3, 50, 4);
 
-        when(reservationRepository.findByBookingCode(bookingCodeToFind)).thenReturn(Optional.of(r1));
+        Reservation existing = new Reservation();
+        existing.setId(1L);
+        existing.setContactName("Old Name");
+        existing.setContactPhone("000");
+        existing.setContactEmail("old@example.com");
+        existing.setStartTime(now.plusHours(2));
+        existing.setEndTime(now.plusHours(3));
+        existing.setParticipants(2);
+        existing.setBookingCode(bookingCodeToFind);
+        existing.setConfirmed(false);
+        existing.setActivity(a1);
 
-        ReservationDTO.CreateReservationRequest updateReq = new ReservationDTO.CreateReservationRequest(
-                LocalDateTime.now().plusHours(4),
-                LocalDateTime.now().plusHours(5),
-                5,
-                "New Name",
-                "11223344",
-                "new@example.com",
-                true
-        );
+        when(reservationRepository.findByBookingCode(bookingCodeToFind))
+                .thenReturn(Optional.of(existing));
 
-        ReservationDTO.ReservationResponse mapped = new ReservationDTO.ReservationResponse(
-                updateReq.startTime(),
-                updateReq.endTime(),
-                updateReq.participants(),
-                updateReq.contactName(),
-                updateReq.contactPhone(),
-                updateReq.contactEmail(),
-                bookingCodeToFind,
-                updateReq.isConfirmed()
-        );
+        ReservationDTO.UpdateReservationRequest updateReq =
+                new ReservationDTO.UpdateReservationRequest(
+                        now.plusHours(4),
+                        now.plusHours(5),
+                        Integer.valueOf(5),
+                        "New Name",
+                        "11223344",
+                        "new@example.com",
+                        a2.getId(),
+                        Boolean.TRUE
+                );
+
+        // Service will resolve Activity from ID
+        when(activityRepository.getReferenceById(a2.getId())).thenReturn(a2);
+
+        // Save returns the updated entity
+        when(reservationRepository.save(any(Reservation.class)))
+                .thenAnswer(inv -> inv.getArgument(0, Reservation.class));
+
+        // Mapper builds the response (your ReservationResponse shape)
+        ReservationDTO.ReservationResponse mapped =
+                new ReservationDTO.ReservationResponse(
+                        updateReq.startTime(),
+                        updateReq.endTime(),
+                        updateReq.participants(),   // record is int; Integer auto-unboxes
+                        updateReq.contactName(),
+                        updateReq.contactPhone(),
+                        updateReq.contactEmail(),
+                        bookingCodeToFind,
+                        updateReq.confirmed(),      // Boolean -> boolean auto-unboxes
+                        a2.getId(),
+                        a2.getName()
+                );
 
         when(reservationMapper.toResponse(any(Reservation.class))).thenReturn(mapped);
 
-        when(reservationRepository.save(any(Reservation.class))).thenAnswer(inv -> inv.getArgument(0, Reservation.class));
+        // Act
+        ReservationDTO.ReservationResponse result =
+                reservationService.updateReservation(bookingCodeToFind, updateReq);
 
-        ReservationDTO.ReservationResponse result = reservationService.updateReservation(bookingCodeToFind, updateReq);
-
+        // Assert interactions
         verify(reservationRepository).findByBookingCode(bookingCodeToFind);
+        verify(activityRepository).getReferenceById(a2.getId());
         verify(reservationRepository).save(reservationCaptor.capture());
         verify(reservationMapper).toResponse(any(Reservation.class));
 
+        // Assert saved entity fields
         Reservation saved = reservationCaptor.getValue();
         assertThat(saved.getContactName()).isEqualTo(updateReq.contactName());
         assertThat(saved.getContactPhone()).isEqualTo(updateReq.contactPhone());
         assertThat(saved.getContactEmail()).isEqualTo(updateReq.contactEmail());
-        assertThat(saved.isConfirmed()).isEqualTo(updateReq.isConfirmed());
         assertThat(saved.getStartTime()).isEqualTo(updateReq.startTime());
         assertThat(saved.getEndTime()).isEqualTo(updateReq.endTime());
         assertThat(saved.getParticipants()).isEqualTo(updateReq.participants());
+        assertThat(saved.isConfirmed()).isTrue();
+        assertThat(saved.getActivity()).isNotNull();
+        assertThat(saved.getActivity().getId()).isEqualTo(a2.getId());
+        // booking code must remain unchanged
+        assertThat(saved.getBookingCode()).isEqualTo(bookingCodeToFind);
 
+        // Mapper’s response is returned
         assertThat(result).isEqualTo(mapped);
     }
 }
