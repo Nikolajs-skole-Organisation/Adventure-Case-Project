@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Activities</title>
+  <link rel="stylesheet" href="../js/css/adminIndex.css">
+</head>
+<body>
+<header>
+  <h1>Manage Activities</h1>
+  <a href="../webpages/adminIndex.html">← Back to Dashboard</a> 
+</header>
+
+<main>
+  <!-- Formular til opret / rediger -->
+  <form id="activity-form">
+    <input type="hidden" id="id" name="id">
+
+    <label>Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label>Description:</label>
+    <textarea id="description" name="description" required></textarea>
+
+    <label>Minimum Age:</label>
+    <input type="number" id="minAge" min="0" name="minAge" required>
+
+    <label>Minimum Height:</label>
+    <input type="number" id="minHeight" min="0" name="minHeight" required>
+
+    <label>Maximum Participants:</label>
+    <input type="number" id="maxParticipants" min="0" name="maxParticipants" required>
+
+     <label>Price:</label>
+    <input type="number" id="price" min="0" name="price" required>
+
+    <button type="submit">Save Activity</button>
+  </form>
+
+  <!-- Tabel til at vise aktiviteter -->
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th><th>Name</th><th>Description</th>
+        <th>Min Age</th><th>Min Height</th><th>Max Participants</th><th>Price</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="activity-table-body"></tbody>
+  </table>
+</main>
+
+<script type="module" src="../js/controller-scripts/activityController.js"></script>
+</body>
+</html>
