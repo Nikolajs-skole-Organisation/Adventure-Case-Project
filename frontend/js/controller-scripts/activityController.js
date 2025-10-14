@@ -1,4 +1,9 @@
-import { createActivity, getActivities, updateActivity, deleteActivity } from "../services/activityApi.js";
+import {
+  createActivity,
+  getActivities,
+  updateActivity,
+  deleteActivity,
+} from "../services/activityApi.js";
 
 window.addEventListener("DOMContentLoaded", initApp);
 
@@ -34,7 +39,7 @@ async function handleFormSubmit(event) {
     minAge: parseInt(fd.get("minAge")),
     minHeight: parseInt(fd.get("minHeight")),
     maxParticipants: parseInt(fd.get("maxParticipants")),
-    price: parseFloat(fd.get("price"))
+    price: parseFloat(fd.get("price")),
   };
 
   if (fd.get("id")) {
@@ -59,7 +64,8 @@ async function handleTableClick(event) {
       description: row.children[2].textContent,
       minAge: row.children[3].textContent,
       minHeight: row.children[4].textContent,
-      maxParticipants: row.children[5].textContent
+      maxParticipants: row.children[5].textContent,
+      price: row.children[6].textContent,
     });
   }
 
@@ -76,7 +82,7 @@ function renderTable(activities) {
   const tbody = document.getElementById("activity-table-body");
   tbody.innerHTML = "";
 
-  activities.forEach(act => {
+  activities.forEach((act) => {
     const html = `
       <tr data-id="${act.id}">
         <td>${act.id}</td>
