@@ -1,55 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Activities</title>
-  <link rel="stylesheet" href="../js/css/adminIndex.css">
-</head>
-<body>
-<header>
-  <h1>Manage Activities</h1>
-  <a href="../webpages/adminIndex.html">← Back to Dashboard</a> 
-</header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Activities</title>
+    <link rel="stylesheet" href="../css/main.css" />
+  </head>
+  <body class="layout">
+    <aside id="sidebarHost"></aside>
+    <div class="layout__content admin-activities">
+      <header>
+        <h1>Manage Activities</h1>
+      </header>
 
-<main>
-  <!-- Formular til opret / rediger -->
-  <form id="activity-form">
-    <input type="hidden" id="id" name="id">
+      <main>
+        <!-- Formular til opret / rediger -->
+        <form id="activity-form">
+          <input type="hidden" id="id" name="id" />
 
-    <label>Name:</label>
-    <input type="text" id="name" name="name" required>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" required />
+            </div>
 
-    <label>Description:</label>
-    <textarea id="description" name="description" required></textarea>
+            <div class="form-field">
+              <label for="description">Description</label>
+              <input id="description" name="description" required></input>
+            </div>
 
-    <label>Minimum Age:</label>
-    <input type="number" id="minAge" min="0" name="minAge" required>
+            <div class="form-field">
+              <label for="minAge">Minimum Age</label>
+              <input type="number" id="minAge" min="0" name="minAge" required />
+            </div>
 
-    <label>Minimum Height:</label>
-    <input type="number" id="minHeight" min="0" name="minHeight" required>
+            <div class="form-field">
+              <label for="minHeight">Minimum Height</label>
+              <input
+                type="number"
+                id="minHeight"
+                min="0"
+                name="minHeight"
+                required
+              />
+            </div>
 
-    <label>Maximum Participants:</label>
-    <input type="number" id="maxParticipants" min="0" name="maxParticipants" required>
+            <div class="form-field">
+              <label for="maxParticipants">Maximum Participants</label>
+              <input
+                type="number"
+                id="maxParticipants"
+                min="0"
+                name="maxParticipants"
+                required
+              />
+            </div>
 
-     <label>Price:</label>
-    <input type="number" id="price" min="0" name="price" required>
+            <div class="form-field">
+              <label for="price">Price</label>
+              <input type="number" id="price" min="0" name="price" required />
+            </div>
+          </div>
 
-    <button type="submit">Save Activity</button>
-  </form>
+          <div class="form-actions">
+            <button type="submit">Save Activity</button>
+          </div>
+        </form>
 
-  <!-- Tabel til at vise aktiviteter -->
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th><th>Name</th><th>Description</th>
-        <th>Min Age</th><th>Min Height</th><th>Max Participants</th><th>Price</th><th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="activity-table-body"></tbody>
-  </table>
-</main>
+        <!-- Tabel til at vise aktiviteter -->
+        <section class="admin-activities__table">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Min Age</th>
+                  <th>Min Height</th>
+                  <th>Max Participants</th>
+                  <th>Price</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="activity-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
 
-<script type="module" src="../js/controller-scripts/activityController.js"></script>
-</body>
+    <script type="module">
+      import { mountSidebar } from "../js/sidebar.js";
+      mountSidebar("sidebarHost", "activities");
+    </script>
+
+    <script
+      type="module"
+      src="../js/controller-scripts/activityController.js"
+    ></script>
+  </body>
 </html>

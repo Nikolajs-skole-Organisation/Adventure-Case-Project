@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Employees - Adventure Case</title>
+    <link rel="stylesheet" href="../css/main.css" />
+  </head>
+  <body class="layout">
+    <aside id="sidebarHost"></aside>
+
+    <main class="employee-list">
+      <header>
+        <h1>Employees</h1>
+        <p class="employee-list__intro">
+          Below is the current roster. Data updates automatically when loaded.
+        </p>
+      </header>
+
+      <section>
+        <div id="employeeListError" class="employee-list__error" role="alert" hidden>
+          Could not load employees. Please try again later.
+        </div>
+
+        <table class="employee-list__table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Role</th>
+            </tr>
+          </thead>
+          <tbody id="employeeTableBody">
+            <tr>
+              <td colspan="3">Loading employees...</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <script type="module">
+      import { mountSidebar } from "../js/sidebar.js";
+      mountSidebar("sidebarHost", "employee-list");
+    </script>
+    <script type="module" src="../js/utils/authGuard.js"></script>
+    <script type="module" src="../js/controller-scripts/employeeListController.js"></script>
+  </body>
+</html>

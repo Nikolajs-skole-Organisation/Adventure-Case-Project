@@ -5,8 +5,8 @@ const sidebarHtml = `
       <li><a href="/webpages/dashboard.html" data-route="dashboard">Dashboard</a></li>
       <li><a href="/webpages/shift-list.html" data-route="shift-list">Shifts</a></li>
       <li><a href="/webpages/employee-list.html" data-route="employee-list">Employees</a></li>
-      <li><a href="/webpages/activity-list.html" data-route="activity-list">Activities</a></li>
-      <li><a href="/webpages/reservation-list.html" data-route="reservation-list">Reservations</a></li>
+      <li><a href="/webpages/adminActivity.html" data-route="activities">Activities</a></li>
+      <li><a href="/webpages/reservations.html" data-route="reservations">Reservations</a></li>
     </ul>
   </nav>
 `;

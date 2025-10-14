@@ -1,45 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reservationer</title>
+    <link rel="stylesheet" href="../css/main.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Reservationer</title>
-  <link rel="stylesheet" href="../css/main.css" />
-</head>
+  <body class="layout">
+    <aside id="sidebarHost"></aside>
+    <div class="layout__content reservations-page">
+      <header class="topbar">
+        <h1>Reservations</h1>
+        <button id="logoutBtn" type="button">Logout</button>
+      </header>
 
-<body class="page">
-  <header class="topbar">
-    <h1>Reservations</h1>
-    <button id="logoutBtn" type="button">Logout</button>
-  </header>
+      <main class="container">
+        <section class="card">
+          <div class="card__header">
+            <input id="searchInput" placeholder="Search name/id" />
+          </div>
+          <div id="error" class="error" hidden></div>
+          <div class="table-wrap">
+            <table id="reservationsTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
 
-  <main class="container">
-    <section class="card">
-      <div class="card__header">
-        <input id="searchInput" placeholder="Search name/id" />
-      </div>
-      <div id="error" class="error" hidden></div>
-      <div class="table-wrap">
-        <table id="reservationsTable">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Start</th>
-              <th>End</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
+    <script type="module">
+      import { mountSidebar } from "../js/sidebar.js";
+      mountSidebar("sidebarHost", "reservations");
+    </script>
 
-  <script type="module" src="../js/utils/authGuard.js"></script>
-  <script type="module" src="../js/controller-scripts/reservationController.js"></script>
-
-</body>
-
+    <script type="module" src="../js/utils/authGuard.js"></script>
+    <script
+      type="module"
+      src="../js/controller-scripts/reservationController.js"
+    ></script>
+  </body>
 </html>
