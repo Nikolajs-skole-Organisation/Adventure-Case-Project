@@ -203,9 +203,18 @@ class ReservationServiceImplTest {
         when(reservationRepository.findAll(any(Specification.class), eq(pageable)))
                 .thenReturn(expected);
 
-        Page<Reservation> result = reservationService.search(query, pageable);
+        Page<ReservationDTO.ReservationResponse> result = reservationService.search(query, pageable);
 
-        assertThat(result).isSameAs(expected);
+        var dto1 = reservationMapper.toResponse(r1);
+        var dto2 = reservationMapper.toResponse(r2);
+
+        assertThat(result.getNumber()).isEqualTo(0);
+        assertThat(result.getSize()).isEqualTo(20);
+        assertThat(result.getTotalElements()).isEqualTo(2);
+
+        assertThat(result.getContent())
+                .usingRecursiveFieldByFieldElementComparator()
+                .containsExactly(dto1, dto2);
 
         ArgumentCaptor<Specification<Reservation>> specificationArgumentCaptor = ArgumentCaptor.forClass(Specification.class);
         verify(reservationRepository, times(1)).findAll(specificationArgumentCaptor.capture(), eq(pageable));

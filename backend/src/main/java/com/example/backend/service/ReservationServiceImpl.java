@@ -131,7 +131,9 @@ public class ReservationServiceImpl implements ReservationService{
     }
 
     @Override
-    public Page<Reservation> search(String query, Pageable pageable){
-        return reservationRepository.findAll(ReservationSpecification.search(query), pageable);
+    public Page<ReservationDTO.ReservationResponse> search(String query, Pageable pageable){
+        return reservationRepository
+                .findAll(ReservationSpecification.search(query), pageable)
+                .map(reservationMapper::toResponse);
     }
 }

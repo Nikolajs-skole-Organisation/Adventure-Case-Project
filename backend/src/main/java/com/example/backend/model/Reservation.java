@@ -27,8 +27,7 @@ public class Reservation {
     @Column(nullable = false)
     private boolean confirmed = false;
 
-    public Reservation(Long id, LocalDateTime startTime, LocalDateTime endTime, int participants, String contactName, String contactPhone, String contactEmail) {
-        this.id = id;
+    public Reservation(LocalDateTime startTime, LocalDateTime endTime, int participants, String contactName, String contactPhone, String contactEmail) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.participants = participants;
