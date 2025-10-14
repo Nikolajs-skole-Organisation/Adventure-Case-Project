@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard - Adventure Case</title>
+    <link rel="stylesheet" href="../css/main.css" />
+  </head>
+  <body class="layout">
+    <aside id="sidebarHost"></aside>
+
+    <main class="dashboard">
+      <h1>Dashboard</h1>
+      <p class="dashboard__intro">
+        Welcome to Adventure Case. Use the links below to jump into the tools you need.
+      </p>
+
+      <section>
+        <h2>Quick links</h2>
+        <ul class="dashboard__list">
+          <li><a href="/webpages/shift-list.html">Shifts overview</a></li>
+          <li><a href="/webpages/shift-detail.html">Shift detail</a></li>
+          <li><a href="/webpages/reservations.html">Reservations</a></li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Today</h2>
+        <p>No updates yet.</p>
+      </section>
+    </main>
+
+    <script type="module">
+      import { mountSidebar } from "../js/sidebar.js";
+      mountSidebar("sidebarHost", "dashboard");
+    </script>
+    <script type="module" src="../js/utils/authGuard.js"></script>
+  </body>
+</html>

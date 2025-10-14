@@ -439,3 +439,52 @@ body {
   padding: 2rem;
   background: #f5f7fa;
 }
+
+/* Dashboard */
+.dashboard {
+  padding: 32px;
+  background: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dashboard section {
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+}
+
+.dashboard h1 {
+  margin: 0;
+}
+
+.dashboard__intro {
+  margin: 0 0 8px;
+  color: #475569;
+}
+
+.dashboard h2 {
+  margin-top: 0;
+}
+
+.dashboard__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard__list li + li {
+  margin-top: 4px;
+}
+
+.dashboard__list a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.dashboard__list a:hover {
+  text-decoration: underline;
+}
