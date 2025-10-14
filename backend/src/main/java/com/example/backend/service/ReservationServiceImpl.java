@@ -4,9 +4,11 @@ import com.example.backend.dto.ReservationDTO;
 import com.example.backend.dto.ReservationMapper;
 import com.example.backend.exception.reservationExceptions.ReservationDateAlreadyPassedException;
 import com.example.backend.exception.reservationExceptions.ReservationNotFoundException;
+import com.example.backend.model.Activity;
 import com.example.backend.model.BookingCodeGenerator;
 import com.example.backend.model.Reservation;
 import com.example.backend.model.ReservationSpecification;
+import com.example.backend.repository.ActivityRepository;
 import com.example.backend.repository.ReservationRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -25,18 +27,23 @@ public class ReservationServiceImpl implements ReservationService{
     private final ReservationRepository reservationRepository;
     private final BookingCodeGenerator codeGen;
     private final ReservationMapper reservationMapper;
+    private final ActivityRepository activityRepository;
 
     public ReservationServiceImpl(ReservationRepository reservationRepository, BookingCodeGenerator codeGenerator,
-                                  ReservationMapper reservationMapper) {
+                                  ReservationMapper reservationMapper, ActivityRepository activityRepository) {
         this.reservationRepository = reservationRepository;
         this.codeGen = codeGenerator;
         this.reservationMapper = reservationMapper;
+        this.activityRepository = activityRepository;
     }
 
     @Override
     public ReservationDTO.ReservationResponse createReservation(ReservationDTO.CreateReservationRequest newReservationDto) {
-        Reservation newReservation = reservationMapper.toEntity(newReservationDto);
+        Activity activity = activityRepository.getReferenceById(newReservationDto.activityId());
+
+        Reservation newReservation = reservationMapper.toEntity(newReservationDto, activity);
         newReservation.setId(null);
+        newReservation.setConfirmed(false);
 
         final int maxAttempts = 5;
         for (int attempt = 0; attempt <= maxAttempts; attempt++){
@@ -52,7 +59,7 @@ public class ReservationServiceImpl implements ReservationService{
     }
 
     @Override
-    public ReservationDTO.ReservationResponse updateReservation(String bookingCode, ReservationDTO.CreateReservationRequest updatedReservation) {
+    public ReservationDTO.ReservationResponse updateReservation(String bookingCode, ReservationDTO.UpdateReservationRequest updatedReservation) {
         Optional<Reservation> optionalReservation = reservationRepository.findByBookingCode(bookingCode);
         if (optionalReservation.isEmpty()){
             throw new ReservationNotFoundException("Reservation not found with booking code: " + bookingCode);
@@ -61,17 +68,23 @@ public class ReservationServiceImpl implements ReservationService{
         Reservation reservationToBeUpdated = optionalReservation.get();
 
         //checks if the reservation has already happened.
-        if (reservationToBeUpdated.getStartTime().isBefore(LocalDateTime.now())){
+        if (reservationToBeUpdated.getStartTime() != null && reservationToBeUpdated.getEndTime() != null &&
+                reservationToBeUpdated.getStartTime().isBefore(LocalDateTime.now())){
             throw new ReservationDateAlreadyPassedException("Cannot edit a reservation past the reservation start time");
         }
 
-        reservationToBeUpdated.setContactName(updatedReservation.contactName());
-        reservationToBeUpdated.setContactPhone(updatedReservation.contactPhone());
-        reservationToBeUpdated.setContactEmail(updatedReservation.contactEmail());
-        reservationToBeUpdated.setConfirmed(updatedReservation.isConfirmed());
-        reservationToBeUpdated.setStartTime(updatedReservation.startTime());
-        reservationToBeUpdated.setEndTime(updatedReservation.endTime());
-        reservationToBeUpdated.setParticipants(updatedReservation.participants());
+        if (updatedReservation.startTime() != null) reservationToBeUpdated.setStartTime(updatedReservation.startTime());
+        if (updatedReservation.endTime()   != null) reservationToBeUpdated.setEndTime(updatedReservation.endTime());
+        if (updatedReservation.participants() != null) reservationToBeUpdated.setParticipants(updatedReservation.participants());
+        if (updatedReservation.contactName()  != null) reservationToBeUpdated.setContactName(updatedReservation.contactName());
+        if (updatedReservation.contactPhone() != null) reservationToBeUpdated.setContactPhone(updatedReservation.contactPhone());
+        if (updatedReservation.contactEmail() != null) reservationToBeUpdated.setContactEmail(updatedReservation.contactEmail());
+        if (updatedReservation.confirmed() != null) reservationToBeUpdated.setConfirmed(updatedReservation.confirmed());
+
+        if (updatedReservation.activityId() != null){
+            Activity activityRef = activityRepository.getReferenceById(updatedReservation.activityId());
+            reservationToBeUpdated.setActivity(activityRef);
+        }
 
         Reservation saved = reservationRepository.save(reservationToBeUpdated);
         return reservationMapper.toResponse(saved);
@@ -118,7 +131,9 @@ public class ReservationServiceImpl implements ReservationService{
     }
 
     @Override
-    public Page<Reservation> search(String query, Pageable pageable){
-        return reservationRepository.findAll(ReservationSpecification.search(query), pageable);
+    public Page<ReservationDTO.ReservationResponse> search(String query, Pageable pageable){
+        return reservationRepository
+                .findAll(ReservationSpecification.search(query), pageable)
+                .map(reservationMapper::toResponse);
     }
 }

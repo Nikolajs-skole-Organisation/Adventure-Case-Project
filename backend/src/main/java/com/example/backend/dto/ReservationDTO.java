@@ -11,7 +11,7 @@ public class ReservationDTO {
             String contactName,
             String contactPhone,
             String contactEmail,
-            Boolean isConfirmed
+            Long activityId
     ) {
     }
 
@@ -23,7 +23,20 @@ public class ReservationDTO {
             String contactPhone,
             String contactEmail,
             String bookingCode,
-            boolean confirmed
+            boolean confirmed,
+            Long activityId,
+            String activityName
     ) {
     }
+
+    public record UpdateReservationRequest(
+            LocalDateTime startTime,
+            LocalDateTime endTime,
+            Integer participants,
+            String contactName,
+            String contactPhone,
+            String contactEmail,
+            Long activityId,
+            Boolean confirmed
+    ){}
 }
