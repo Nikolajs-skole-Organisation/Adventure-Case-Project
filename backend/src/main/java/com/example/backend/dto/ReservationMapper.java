@@ -1,5 +1,6 @@
 package com.example.backend.dto;
 
+import com.example.backend.model.Activity;
 import com.example.backend.model.Reservation;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +10,10 @@ public class ReservationMapper {
 
     public ReservationDTO.ReservationResponse toResponse(Reservation reservation) {
         if (reservation == null) return null;
+        var activity = reservation.getActivity();
+        Long activityId = activity != null ? activity.getId() : null;
+        String activityName = activity != null ? activity.getName() : null;
+
         return new ReservationDTO.ReservationResponse(
                 reservation.getStartTime(),
                 reservation.getEndTime(),
@@ -17,11 +22,13 @@ public class ReservationMapper {
                 reservation.getContactPhone(),
                 reservation.getContactEmail(),
                 reservation.getBookingCode(),
-                reservation.isConfirmed()
+                reservation.isConfirmed(),
+                activityId,
+                activityName
         );
     }
 
-    public Reservation toEntity(ReservationDTO.CreateReservationRequest reservationDto) {
+    public Reservation toEntity(ReservationDTO.CreateReservationRequest reservationDto, Activity activity) {
         if (reservationDto == null) return null;
 
         Reservation r = new Reservation();
@@ -31,6 +38,7 @@ public class ReservationMapper {
         r.setContactName(reservationDto.contactName());
         r.setContactPhone(reservationDto.contactPhone());
         r.setContactEmail(reservationDto.contactEmail());
+        r.setActivity(activity);
 
         return r;
     }

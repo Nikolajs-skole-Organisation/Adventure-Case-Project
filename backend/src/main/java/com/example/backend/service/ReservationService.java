@@ -11,11 +11,11 @@ import java.util.List;
 
 public interface ReservationService {
     public ReservationDTO.ReservationResponse createReservation(ReservationDTO.CreateReservationRequest reservationDto);
-    public ReservationDTO.ReservationResponse updateReservation(String bookingCode, ReservationDTO.CreateReservationRequest updatedReservation);
+    public ReservationDTO.ReservationResponse updateReservation(String bookingCode, ReservationDTO.UpdateReservationRequest updatedReservation);
     public Reservation getReservationById(Long id);
     public List<Reservation> getAllReservations();
     public void cancelReservationByCode(String bookingCode);
     List<ReservationDTO.ReservationResponse> getReservationsForDate(LocalDate date);
     void confirmByBookingCode(String bookingCode);
-    Page<Reservation> search(String query, Pageable pageable);
+    Page<ReservationDTO.ReservationResponse> search(String query, Pageable pageable);
 }

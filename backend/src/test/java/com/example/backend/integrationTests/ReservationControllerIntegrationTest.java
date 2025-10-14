@@ -2,6 +2,7 @@ package com.example.backend.integrationTests;
 
 import com.example.backend.controller.ReservationController;
 import com.example.backend.dto.ReservationDTO;
+import com.example.backend.model.Activity;
 import com.example.backend.model.Reservation;
 import com.example.backend.service.ReservationService;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,9 @@ public class ReservationControllerIntegrationTest {
 
     @Test
     void createReservation_returnCreated() throws Exception {
+
+        Activity a1 = new Activity(1L, "Gokart", "Fun", 300, 10, 100, 6);
+
         ReservationDTO.ReservationResponse returned =
                 new ReservationDTO.ReservationResponse(
                         LocalDateTime.parse("2025-10-05T16:30:00"),
@@ -43,7 +47,9 @@ public class ReservationControllerIntegrationTest {
                         "12345678",
                         "john@example.com",
                         "RSV-TEST123",
-                        false
+                        false,
+                        a1.getId(),
+                        a1.getName()
                 );
 
         when(reservationService.createReservation(any(ReservationDTO.CreateReservationRequest.class)))
@@ -71,6 +77,10 @@ public class ReservationControllerIntegrationTest {
 
     @Test
     void listForSpecificDate_returnsList_whenExists() throws Exception {
+
+
+        Activity a1 = new Activity(1L, "Gokart", "Fun", 300, 10, 100, 6);
+
         var item = new ReservationDTO.ReservationResponse(
                 LocalDateTime.parse("2025-10-06T09:00:00"),
                 LocalDateTime.parse("2025-10-06T10:00:00"),
@@ -79,7 +89,9 @@ public class ReservationControllerIntegrationTest {
                 "11111111",
                 "anna@example.com",
                 "CODE-1",
-                false
+                false,
+                a1.getId(),
+                a1.getName()
         );
         when(reservationService.getReservationsForDate(LocalDate.parse("2025-10-06")))
                 .thenReturn(java.util.List.of(item));

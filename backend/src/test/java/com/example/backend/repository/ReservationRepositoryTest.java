@@ -1,10 +1,12 @@
 package com.example.backend.repository;
 
+import com.example.backend.model.Activity;
 import com.example.backend.model.Reservation;
 import com.example.backend.model.ReservationSpecification;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,11 +22,17 @@ public class ReservationRepositoryTest {
 
     @Autowired
     ReservationRepository reservationRepository;
+    @Autowired
+    TestEntityManager em;
 
     //inserts 3 elements into the db. Searches for all the ones named "john". Asserts that only the 2 elements
     //with the name "john" gets returned and that those 2 elements contains the correct information of the 2 johns.
     @Test
     void search_byName_returnsOnlyMatchingRows(){
+
+        Activity a1 = new Activity(null, "Gokart", "Fun", 300, 10, 100, 6);
+        a1 = em.persistAndFlush(a1);
+
         Reservation john1 = new Reservation();
         john1.setContactName("John Smith");
         john1.setStartTime(LocalDateTime.parse("2025-10-10T10:00:00"));
@@ -34,6 +42,7 @@ public class ReservationRepositoryTest {
         john1.setContactEmail("jsmith@example.com");
         john1.setBookingCode("BOOK00000001");
         john1.setConfirmed(false);
+        john1.setActivity(a1);
 
 
         Reservation john2 = new Reservation();
@@ -45,6 +54,7 @@ public class ReservationRepositoryTest {
         john2.setContactEmail("jwick@example.com");
         john2.setBookingCode("BOOK00000002");
         john2.setConfirmed(false);
+        john2.setActivity(a1);
 
         Reservation jane = new Reservation();
         jane.setContactName("Jane Doe");
@@ -55,6 +65,7 @@ public class ReservationRepositoryTest {
         jane.setContactEmail("janek@example.com");
         jane.setBookingCode("BOOK00000003");
         jane.setConfirmed(false);
+        jane.setActivity(a1);
 
         reservationRepository.saveAll(List.of(john1, john2, jane));
 

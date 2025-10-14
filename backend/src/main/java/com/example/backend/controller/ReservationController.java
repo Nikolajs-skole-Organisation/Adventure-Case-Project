@@ -62,23 +62,25 @@ public class ReservationController {
     // and list them by startTime in ascending order, so the next reservation is first.
     // if more than one result it will list them by startTime in ascending order also.
     @GetMapping("/search")
-    public ResponseEntity<ReservationPageResponse> search(
+    public ResponseEntity<ReservationPageResponse<ReservationDTO.ReservationResponse>> search(
             @RequestParam(name = "query") String query,
             @PageableDefault(size = 20, sort = "startTime", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        Page<Reservation> page = reservationService.search(query, pageable);
-        var body = new ReservationPageResponse(
+        Page<ReservationDTO.ReservationResponse> page = reservationService.search(query, pageable);
+
+        var body = new ReservationPageResponse<>(
                 page.getContent(),
                 page.getNumber(),
                 page.getSize(),
                 page.getTotalElements()
         );
+
         return ResponseEntity.ok(body);
     }
 
     @PutMapping("/{bookingCode}")
     public ResponseEntity<ReservationDTO.ReservationResponse> updateReservation(@PathVariable String bookingCode,
-                                                                                @RequestBody ReservationDTO.CreateReservationRequest updatedReservation) {
+                                                                                @RequestBody ReservationDTO.UpdateReservationRequest updatedReservation) {
         try {
             return ResponseEntity.ok(reservationService.updateReservation(bookingCode, updatedReservation));
         } catch (RuntimeException e) {

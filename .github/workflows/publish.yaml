@@ -2,6 +2,8 @@ name: Push to GCHR
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
 
 
@@ -11,7 +13,7 @@ env:
 
 jobs:
   java-test:
-    uses: java-test-reusable.yaml
+    uses: ./.github/workflows/java-test-reusable.yaml
 
   build-and-push:
     needs: java-test
