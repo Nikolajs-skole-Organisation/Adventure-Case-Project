@@ -1062,4 +1062,50 @@ body {
   }
 }
 
+/* FOR RESERVATIONS */
+
+/* Reservation dialog backdrop */
+#reservation-dialog::backdrop { background: rgba(0,0,0,.55); }
+#reservation-dialog {
+  border: none;
+  border-radius: 16px;
+  padding: 0;
+  width: min(720px, 92vw);
+  max-height: 90vh;
+  overflow: auto;
+  box-shadow: 0 15px 40px rgba(0,0,0,.35);
+}
+
+.res-card { background: #fff; border-radius: 16px; overflow: hidden; }
+.res-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 1rem 1.25rem; border-bottom: 1px solid #eee;
+}
+.res-title { margin: 0; font-size: 1.25rem; }
+.res-close {
+  border:none; background:transparent; font-size:1.2rem; cursor:pointer;
+}
+.res-body { padding: 1rem 1.25rem 1.25rem; display:grid; gap:1rem; }
+.res-row { display:grid; gap: .75rem; }
+@media (min-width: 640px) {
+  .res-row--two { grid-template-columns: 1fr 1fr; }
+  .res-row--three { grid-template-columns: 1fr 1fr 1fr; }
+}
+.res-actions {
+  display:flex; align-items:center; justify-content:space-between; gap: 1rem;
+  padding: 1rem 1.25rem; border-top: 1px solid #eee;
+}
+.res-total { font-weight: 700; }
+.res-submit {
+  padding: .65rem 1rem; border:none; border-radius:10px; cursor:pointer;
+  font-weight:600; background:#0ea5e9; color:white;
+}
+.res-submit:disabled { opacity:.6; cursor:not-allowed; }
+
+.res-field label { display:block; font-size:.9rem; margin-bottom:.25rem; opacity:.85; }
+.res-field input, .res-field select {
+  width:100%; padding:.6rem .7rem; border:1px solid #ddd; border-radius:10px;
+}
+
+
 /* INDEX CSS */
