@@ -950,3 +950,162 @@ body {
 .employee-list__table tbody tr:hover {
   background: rgba(37, 99, 235, 0.08);
 }
+
+/* INDEX CSS */
+#activities-container {
+  display: flex;
+  flex-wrap: wrap;             /* allows multiple rows */
+  gap: 1.5rem;                 /* space between cards */
+  justify-content: center;     /* centers them horizontally */
+  padding: 2rem;
+}
+
+.activity-card {
+  display: flex;
+  flex-direction: column;      /* stack image above text */
+  align-items: center;
+  width: 200px;                /* card width */
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.activity-card:hover {
+  transform: scale(1.05);
+}
+
+.activity-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;           /* crop nicely */
+}
+
+.activity-card p {
+  margin: 0.5rem 0 1rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+#activities-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.activity-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+  overflow: hidden;
+  transition: transform .2s ease;
+  cursor: pointer;
+}
+.activity-card:hover { transform: scale(1.03); }
+.activity-card img { width: 100%; height: 140px; object-fit: cover; }
+.activity-card p { margin: .5rem 0 1rem; font-weight: 600; text-align: center; }
+
+/* Dialog = centered big card */
+#activity-dialog::backdrop { background: rgba(0,0,0,.55); }
+#activity-dialog {
+  border: none;
+  border-radius: 16px;
+  padding: 0;
+  width: min(800px, 92vw);
+  max-height: 90vh;
+  overflow: auto;
+  box-shadow: 0 15px 40px rgba(0,0,0,.35);
+}
+
+.detail-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  background: #fff;
+}
+.detail-media img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  display: block;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+.detail-body { padding: 1.25rem 1.25rem 1rem; }
+.detail-header {
+  display:flex; align-items:center; justify-content:space-between; gap:1rem;
+}
+.detail-title { margin: 0; font-size: 1.4rem; }
+.detail-close {
+  border: none; background: transparent; font-size: 1.2rem; cursor: pointer;
+}
+.detail-list { margin: .5rem 0 0; padding: 0; list-style: none; display:grid; gap:.25rem; }
+.detail-list li { opacity: .85; }
+.detail-desc { margin-top: .75rem; line-height: 1.4; }
+
+/* Wider screens: two-column layout */
+@media (min-width: 700px) {
+  .detail-card {
+    grid-template-columns: 1.2fr 1fr;
+  }
+  .detail-media img {
+    height: 100%;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 16px;
+  }
+}
+
+/* FOR RESERVATIONS */
+
+/* Reservation dialog backdrop */
+#reservation-dialog::backdrop { background: rgba(0,0,0,.55); }
+#reservation-dialog {
+  border: none;
+  border-radius: 16px;
+  padding: 0;
+  width: min(720px, 92vw);
+  max-height: 90vh;
+  overflow: auto;
+  box-shadow: 0 15px 40px rgba(0,0,0,.35);
+}
+
+.res-card { background: #fff; border-radius: 16px; overflow: hidden; }
+.res-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 1rem 1.25rem; border-bottom: 1px solid #eee;
+}
+.res-title { margin: 0; font-size: 1.25rem; }
+.res-close {
+  border:none; background:transparent; font-size:1.2rem; cursor:pointer;
+}
+.res-body { padding: 1rem 1.25rem 1.25rem; display:grid; gap:1rem; }
+.res-row { display:grid; gap: .75rem; }
+@media (min-width: 640px) {
+  .res-row--two { grid-template-columns: 1fr 1fr; }
+  .res-row--three { grid-template-columns: 1fr 1fr 1fr; }
+}
+.res-actions {
+  display:flex; align-items:center; justify-content:space-between; gap: 1rem;
+  padding: 1rem 1.25rem; border-top: 1px solid #eee;
+}
+.res-total { font-weight: 700; }
+.res-submit {
+  padding: .65rem 1rem; border:none; border-radius:10px; cursor:pointer;
+  font-weight:600; background:#0ea5e9; color:white;
+}
+.res-submit:disabled { opacity:.6; cursor:not-allowed; }
+
+.res-field label { display:block; font-size:.9rem; margin-bottom:.25rem; opacity:.85; }
+.res-field input, .res-field select {
+  width:100%; padding:.6rem .7rem; border:1px solid #ddd; border-radius:10px;
+}
+
+
+/* INDEX CSS */
