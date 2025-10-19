@@ -1,5 +1,5 @@
 const KEY_LOGIN = "isLoggedIn";
-const KEY_USER  = "currentUser";
+const KEY_USER = "currentUser";
 
 export function setLoggedIn(userObj) {
   localStorage.setItem(KEY_LOGIN, "true");

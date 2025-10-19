@@ -1107,5 +1107,100 @@ body {
   width:100%; padding:.6rem .7rem; border:1px solid #ddd; border-radius:10px;
 }
 
+.reservations-page .topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  margin-bottom: 20px;
+}
+
+.reservations-page .container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.reservations-page .card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  padding: 16px 18px 20px;
+}
+
+.reservations-page .card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+#searchInput {
+  width: 280px;
+  max-width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d0d7e2;
+  background: #f9fbfd;
+  font: inherit;
+  transition: box-shadow .15s ease, border-color .15s ease, background .15s ease;
+}
+#searchInput:focus {
+  outline: none;
+  border-color: #2563eb;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+}
+
+#error {
+  margin: 8px 0 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: 600;
+}
+
+.table-wrap { overflow-x: auto; }
+
+#reservationsTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px; /* så head og celler ser pæne ud på small screens */
+}
+
+#reservationsTable thead th {
+  background: #0f172a;
+  color: #fff;
+  text-align: left;
+  padding: 12px 14px;
+  text-transform: uppercase;
+  font-size: .8rem;
+  letter-spacing: .04em;
+}
+
+#reservationsTable th,
+#reservationsTable td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+#reservationsTable tbody tr:nth-child(even) { background: #f8fafc; }
+#reservationsTable tbody tr:hover { background: rgba(37, 99, 235, 0.08); }
+
+#reservationsTable td:nth-child(6) { /* Status-kolonnen */
+  font-weight: 700;
+  text-align: center;
+  /* “badge”-agtig følelse uden at ændre HTML */
+  background: #eef2ff;
+  color: #3730a3;
+  border-radius: 999px;
+}
+
 
 /* INDEX CSS */
