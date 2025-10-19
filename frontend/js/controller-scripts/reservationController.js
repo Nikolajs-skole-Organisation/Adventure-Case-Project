@@ -1,7 +1,8 @@
-import { getAllReservations } from "../services/reservationApi.js";
-import { clearToken } from "../utils/auth.js";
+import { getAllReservations } from "../services/reservationsApi.js";
+import { clearLogin } from "../utils/authUtils.js";
 
 const dom = {};
+let cache = [];
 
 window.addEventListener("DOMContentLoaded", init);
 
@@ -12,7 +13,7 @@ async function init() {
   dom.logout = document.querySelector("#logoutBtn");
 
   dom.logout?.addEventListener("click", () => {
-    clearToken();
+    clearLogin();
     window.location.assign("login.html");
   });
 
@@ -21,13 +22,32 @@ async function init() {
   await loadReservations();
 }
 
-let cache = [];
-
 async function loadReservations() {
   try {
     dom.error.hidden = true;
     const data = await getAllReservations();
-    cache = Array.isArray(data) ? data : (data?.content ?? []); 
+
+    if (typeof data === "string" || data == null) {
+      cache = [];
+      return render(cache, "No reservations today");
+    }
+
+
+    const list = Array.isArray(data) ? data : (data?.content ?? []);
+
+    cache = list.map(r => ({
+      id: r.bookingCode ?? "",
+      name: r.contactName ?? "",
+      email: r.contactEmail ?? "",
+      start: r.startTime ?? "",
+      end: r.endTime ?? "",
+      status: r.confirmed === true ? "Confirmed"
+        : r.confirmed === false ? "Pending"
+          : "",
+      activity: r.activityName ?? ""
+    }));
+
+    cache.sort((a, b) => new Date(b.start) - new Date(a.start));
     render(cache);
   } catch (err) {
     console.error(err);
@@ -35,29 +55,53 @@ async function loadReservations() {
   }
 }
 
-function render(list) {
+function render(list, emptyMsg = "No reservations found") {
+  if (!list.length) {
+    dom.tableBody.innerHTML = `
+      <tr>
+        <td colspan="6" style="text-align:center; opacity:.8; padding:14px 0;">
+          ${emptyMsg}
+        </td>
+      </tr>`;
+    return;
+  }
+
   dom.tableBody.innerHTML = list.map(r => `
     <tr>
       <td>${safe(r.id)}</td>
-      <td>${safe(r.customerName ?? r.name ?? "")}</td>
-      <td>${safe(r.email ?? "")}</td>
-      <td>${formatDateTime(r.startTime ?? r.start ?? r.from)}</td>
-      <td>${formatDateTime(r.endTime ?? r.end ?? r.to)}</td>
-      <td>${safe(r.status ?? "")}</td>
-    </tr>
-  `).join("");
+      <td>${safe(r.name)}</td>
+      <td>${safe(r.email)}</td>
+      <td>${formatDateTime(r.start)}</td>
+      <td>${formatDateTime(r.end)}</td>
+      <td>${safe(r.status)}</td>
+    </tr>`).join("");
 }
 
+/* ---------------- SEARCH ---------------- */
 function handleFilter() {
   const q = dom.search.value.trim().toLowerCase();
-  if (!q) return render(cache);
+
+  if (!q) {
+    render(cache);
+    return;
+  }
+
   const filtered = cache.filter(r => {
-    const hay = `${r.id ?? ""} ${r.customerName ?? r.name ?? ""} ${r.email ?? ""}`.toLowerCase();
-    return hay.includes(q);
+    const haystack = `
+      ${r.id} ${r.name} ${r.email} ${r.activity} ${r.status}
+    `.toLowerCase();
+
+    return haystack.includes(q);
   });
-  render(filtered);
+
+  if (!filtered.length) {
+    render([], "No matching reservations");
+  } else {
+    render(filtered);
+  }
 }
 
+/* ---------------- HELPERS ---------------- */
 function formatDateTime(v) {
   if (!v) return "";
   try {
@@ -76,6 +120,6 @@ function showError(msg) {
 
 function safe(x) {
   return String(x ?? "").replace(/[&<>"']/g, s => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[s]));
 }
