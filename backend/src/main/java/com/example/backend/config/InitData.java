@@ -28,7 +28,6 @@ public class InitData implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        // Undgå dobbelte seeds ved genstart (justér efter behov)
         if (shiftRepository.count() > 0 || reservationRepository.count() > 0) {
             return;
         }
@@ -72,12 +71,11 @@ public class InitData implements CommandLineRunner {
         laserTag.setMinHeight(130);
         laserTag.setMaxParticipant(12);
 
-        // ----- Shifts (hver dag fra i dag og 1 måned frem: 10–16 & 16–22) -----
         List<Shift> shifts = new ArrayList<>();
         LocalDate startDate = LocalDate.now();
-        LocalDate endDate = startDate.plusMonths(1).minusDays(1); // inklusiv slutdato
+        LocalDate endDate = startDate.plusMonths(1).minusDays(1);
 
-        int empIndex = 0;     // round-robin start
+        int empIndex = 0;
         int minStaff = 1;
         int maxStaff = 4;
 
@@ -100,7 +98,6 @@ public class InitData implements CommandLineRunner {
             s2.addActivity(paintball);
             s2.addActivity(laserTag);
 
-            // Random antal medarbejdere 1–4 pr. vagt (round-robin fordeling)
             int staffForMorning = (int) (Math.random() * (maxStaff - minStaff + 1)) + minStaff;
             int staffForEvening = (int) (Math.random() * (maxStaff - minStaff + 1)) + minStaff;
 
@@ -119,7 +116,7 @@ public class InitData implements CommandLineRunner {
 
         shiftRepository.saveAll(shifts);
 
-        // ----- Reservations (eksempler) -----
+        // ----- Reservations -----
         Reservation reservation1 = new Reservation();
         reservation1.setActivity(goKart);
         reservation1.setConfirmed(false);
