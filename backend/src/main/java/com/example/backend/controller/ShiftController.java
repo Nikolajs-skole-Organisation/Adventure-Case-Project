@@ -37,9 +37,13 @@ public class ShiftController {
 
     @GetMapping("/overview")
     public ResponseEntity<List<ShiftDTO.ShiftDto>> getWeeklyOverview(
-            @RequestParam("weekStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate weekStart) {
-        LocalDateTime start = weekStart.atStartOfDay();
-        LocalDateTime end = weekStart.plusDays(7).atStartOfDay();
+            @RequestParam("weekStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStart) {
+
+        LocalDate monday = weekStart.with(java.time.DayOfWeek.MONDAY);
+
+        LocalDateTime start = monday.atStartOfDay();
+        LocalDateTime end = monday.plusDays(7).atStartOfDay();
+
         List<ShiftDTO.ShiftDto> result = shiftService.getShiftsBetween(start, end);
         return ResponseEntity.ok(result);
     }

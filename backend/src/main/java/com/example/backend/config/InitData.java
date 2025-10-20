@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -27,10 +28,24 @@ public class InitData implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
+        // Undgå dobbelte seeds ved genstart (justér efter behov)
+        if (shiftRepository.count() > 0 || reservationRepository.count() > 0) {
+            return;
+        }
+
         // ----- Employees -----
-        Employee alice   = new Employee(null, "Alice Anders", "alice@gokart.com", "12345678", "Employee", "velkommen123");
-        Employee bob     = new Employee(null, "Bob Berg", "bob@gokart.com", "87654321", "Employee", "velkommen123");
-        Employee charlie = new Employee(null, "Charlie Christensen", "charlie@paintball.com", "11112222", "Employee", "velkommen123");
+        List<Employee> employees = List.of(
+                new Employee(null, "Alice Anders",       "alice@gokart.com",      "12345678", "Employee", "velkommen123"),
+                new Employee(null, "Bob Berg",           "bob@gokart.com",        "87654321", "Employee", "velkommen123"),
+                new Employee(null, "Charlie Christensen", "charlie@paintball.com", "11112222", "Employee", "velkommen123"),
+                new Employee(null, "Ditte Dam",          "ditte@arena.com",       "22223333", "Employee", "velkommen123"),
+                new Employee(null, "Erik Eskildsen",     "erik@arena.com",        "33334444", "Employee", "velkommen123"),
+                new Employee(null, "Freja Frost",        "freja@lasertag.com",    "44445555", "Employee", "velkommen123"),
+                new Employee(null, "Gustav Graversen",   "gustav@gokart.com",     "55556666", "Employee", "velkommen123"),
+                new Employee(null, "Helle Hansen",       "helle@paintball.com",   "66667777", "Employee", "velkommen123"),
+                new Employee(null, "Ida Iversen",        "ida@lasertag.com",      "77778888", "Employee", "velkommen123"),
+                new Employee(null, "Jens Jensen",        "jens@arena.com",        "88889999", "Employee", "velkommen123")
+        );
 
         // ----- Activities -----
         Activity goKart = new Activity();
@@ -57,40 +72,60 @@ public class InitData implements CommandLineRunner {
         laserTag.setMinHeight(130);
         laserTag.setMaxParticipant(12);
 
+        // ----- Shifts (hver dag fra i dag og 1 måned frem: 10–16 & 16–22) -----
+        List<Shift> shifts = new ArrayList<>();
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = startDate.plusMonths(1).minusDays(1); // inklusiv slutdato
 
-        // --- Shifts ---
-        Shift morning = new Shift();
-        morning.setStartTime(LocalDate.now().atTime(9, 0));
-        morning.setEndTime(LocalDate.now().atTime(12, 0));
-        morning.setCapacity(10);
+        int empIndex = 0;     // round-robin start
+        int minStaff = 1;
+        int maxStaff = 4;
 
-        Shift afternoon = new Shift();
-        afternoon.setStartTime(LocalDate.now().atTime(13, 0));
-        afternoon.setEndTime(LocalDate.now().atTime(17, 0));
-        afternoon.setCapacity(10);
+        for (LocalDate d = startDate; !d.isAfter(endDate); d = d.plusDays(1)) {
+            // 10–16
+            Shift s1 = new Shift();
+            s1.setStartTime(d.atTime(10, 0));
+            s1.setEndTime(d.atTime(16, 0));
+            s1.setCapacity(12);
+            s1.addActivity(goKart);
+            s1.addActivity(paintball);
+            s1.addActivity(laserTag);
 
-        // Link activities to shifts
-        morning.addActivity(goKart);
-        morning.addActivity(paintball);
+            // 16–22
+            Shift s2 = new Shift();
+            s2.setStartTime(d.atTime(16, 0));
+            s2.setEndTime(d.atTime(22, 0));
+            s2.setCapacity(12);
+            s2.addActivity(goKart);
+            s2.addActivity(paintball);
+            s2.addActivity(laserTag);
 
-        afternoon.addActivity(goKart);
-        afternoon.addActivity(laserTag);
+            // Random antal medarbejdere 1–4 pr. vagt (round-robin fordeling)
+            int staffForMorning = (int) (Math.random() * (maxStaff - minStaff + 1)) + minStaff;
+            int staffForEvening = (int) (Math.random() * (maxStaff - minStaff + 1)) + minStaff;
 
-        // Assign employees to shifts
-        morning.addEmployee(alice);
-        afternoon.addEmployee(bob);
-        afternoon.addEmployee(charlie);
+            for (int i = 0; i < staffForMorning; i++) {
+                s1.addEmployee(employees.get(empIndex % employees.size()));
+                empIndex++;
+            }
+            for (int i = 0; i < staffForEvening; i++) {
+                s2.addEmployee(employees.get(empIndex % employees.size()));
+                empIndex++;
+            }
 
-        // Save shifts
-        shiftRepository.saveAll(List.of(morning, afternoon));
+            shifts.add(s1);
+            shifts.add(s2);
+        }
 
-        // Reservations
+        shiftRepository.saveAll(shifts);
+
+        // ----- Reservations (eksempler) -----
         Reservation reservation1 = new Reservation();
         reservation1.setActivity(goKart);
         reservation1.setConfirmed(false);
         reservation1.setParticipants(4);
-        reservation1.setStartTime(LocalDateTime.of(2025,10,25,14,0));
-        reservation1.setEndTime(LocalDateTime.of(2025,10,25,16,0));
+        reservation1.setStartTime(LocalDateTime.of(2025, 10, 25, 14, 0));
+        reservation1.setEndTime(LocalDateTime.of(2025, 10, 25, 16, 0));
         reservation1.setContactName("Joe Smith");
         reservation1.setContactEmail("jsmith@gmail.com");
         reservation1.setBookingCode("RKHL12AS69L6");
